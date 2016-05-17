@@ -1,0 +1,11 @@
+删除当前目录下30天以前的所有文件：
+find . -type f -ctime +30 -exec rm -fr {} \;
+ 
+删除当前目录下30天以前的所有目录：
+find . -type d -ctime +30 -exec rm -fr {} \;
+ 
+删除/oracle/123目录下3天以前的文件：
+find /oracle/123 -type f -ctime +3 -exec rm -rf {}\ ;
+ 
+删除当前目录下30天以前，名称匹配"*awr*.html"的文件：
+find . -type f -name "*awr*.html" -ctime +30 -exec rm -fr {} \;

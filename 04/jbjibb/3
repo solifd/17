@@ -1,0 +1,89 @@
+初始化
+
+/etc/pki/tls/openssl.cnf
+rm -rf /etc/pki/CA/*.old
+touch /etc/pki/CA/index.txt
+echo 01 > /etc/pki/CA/serial
+echo 02 > /etc/pki/CA/serial
+rm -rf keys
+mkdir keys
+生成根CA并自签(Common Name填RootCA)
+
+openssl genrsa -des3 -out keys/RootCA.key 2048
+openssl req -new -x509 -days 3650 -key keys/RootCA.key -out keys/RootCA.crt
+生成二级CA(Common Name填secondCA)
+
+openssl genrsa -des3 -out keys/secondCA.key 2048
+openssl rsa -in keys/secondCA.key -out keys/secondCA.key
+openssl req -new -days 3650 -key keys/secondCA.key -out keys/secondCA.csr
+openssl ca -extensions v3_ca -in keys/secondCA.csr -config /etc/pki/tls/openssl.cnf -days 3650 -out keys/secondCA.crt -cert keys/RootCA.crt -keyfile keys/RootCA.key
+生成三级CA(Common Name填thirdCA)
+
+openssl genrsa -des3 -out keys/thirdCA.key 2048
+openssl rsa -in keys/thirdCA.key -out keys/thirdCA.key
+openssl req -new -days 3650 -key keys/thirdCA.key -out keys/thirdCA.csr
+openssl ca -extensions v3_ca -in keys/thirdCA.csr -config /etc/pki/tls/openssl.cnf -days 3650 -out keys/thirdCA.crt -cert keys/secondCA.crt -keyfile keys/secondCA.key
+使用三级CA签发服务器证书
+
+openssl genrsa -des3 -out keys/server.key 2048
+openssl rsa -in keys/server.key -out keys/server.key
+openssl req -new -days 3650 -key keys/server.key -out keys/server.csr
+openssl ca -in keys/server.csr -config /etc/pki/tls/openssl.cnf -days 3650 -out keys/server.crt -cert keys/thirdCA.crt -keyfile keys/thirdCA.key
+ 
+
+最后将RootCA导入受信任的根证书颁发机构，其他两个证书导入中级CA机构，服务器证书根据需要导入
+
+结果如下：
+
+技术分享
+
+ 
+
+报错情况记录
+
+The mandatory stateOrProvinceName field was missing
+原因openssl.cnf中CA policy有三个match，必须要填一样的，或者改成optional
+
+# For the CA policy
+[ policy_match ]
+countryName        = match
+stateOrProvinceName    = match
+organizationName    = match
+organizationalUnitName    = optional
+commonName        = supplied
+emailAddress        = optional
+解决方法：
+
+分别填CN、LiaoNing、ORG
+
+ 
+
+清空文件再次生成证书报错
+
+ERROR:Serial number 01 has already been issued,
+      check the database/serial_file for corruption
+官方承认这是个bug
+
+解决方法：/etc/pki/CA/serial这个文件实际上清空还是会记录生成证书的次数，所以把它改成比较大的数
+
+报错
+
+failed to update database
+TXT_DB error number 2
+这个也是bug，三个方法
+
+产生的原因是:
+This thing happens when certificates share common data. You cannot have two
+certificates that look otherwise the same.
+方法一:
+修改demoCA下 index.txt.attr
+将unique_subject = yes改为unique_subject = no
+方法二:
+删除demoCA下的index.txt,并再touch下rm index.txt touch index.txt
+方法三:
+将 common name设置成不同的
+
+openssl官方在2014年6月修复了这个已经存在十年的问题
+http://rt.openssl.org/Ticket/Display.html?id=502&user=guest&pass=guest
+
+ 

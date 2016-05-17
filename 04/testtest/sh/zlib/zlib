@@ -1,0 +1,7 @@
+tar zxvf zlib-1.2.8.tar.gz
+cd zlib-1.2.8
+./configure
+
+make && make install
+cd ..
+rm -rf zlib-1.2.8

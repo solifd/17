@@ -1,0 +1,72 @@
+rtmp://edge.everyon.tv/ptv/phd59
+rtmp://edge.everyon.tv/ptv/phd60
+rtmp://edge.everyon.tv/ptv/phd61
+rtmp://edge.everyon.tv/ptv/phd62
+rtmp://edge.everyon.tv/ptv/phd63
+rtmp://edge.everyon.tv/ptv/phd64
+rtmp://lm07.everyon.tv/ptv7/phd497
+
+2014-09-02
+JAV TV(HD),rtmp://lm07.everyon.tv:1935/ptv7/phd1003
+18+++(HD),rtmp://lm07.everyon.tv:1935/ptv7/phd1005
+18+++(HD),rtmp://lm07.everyon.tv:1935/ptv7/phd1008
+18+++(HD),rtmp://lm07.everyon.tv:1935/ptv7/phd10497
+18+++(HD),rtmp://lm07.everyon.tv:1935/ptv7/phd1006
+
+
+2014-10-21
+韩源1,rtmp://lm07.everyon.tv/ptv7/pld769
+韩源2,rtmp://lm07.everyon.tv/ptv7/phd59
+韩源3,rtmp://lm07.everyon.tv/ptv7/phd60
+韩源4,rtmp://lm07.everyon.tv/ptv7/phd61
+韩源5,rtmp://lm07.everyon.tv:1935/ptv7/phd62
+韩源6,rtmp://lm07.everyon.tv/ptv7/phd63
+韩源7,rtmp://lm07.everyon.tv/ptv7/phd64
+韩源8,rtmp://lm07.everyon.tv/ptv7/phd499
+韩源9,rtmp://lm07.everyon.tv/ptv7/phd501
+韩源10,rtmp://lm07.everyon.tv/ptv7/phd511
+韩源11,rtmp://lm07.everyon.tv/ptv7/phd765
+韩源12,rtmp://lm07.everyon.tv/ptv7/phd766
+韩源13,rtmp://lm07.everyon.tv/ptv7/phd769
+韩源14,rtmp://lm07.everyon.tv/ptv7/phd771
+韩源15,rtmp://lm07.everyon.tv/ptv7/phd772
+韩源16,rtmp://lm07.everyon.tv/ptv7/phd927
+韩源17,rtmp://lm07.everyon.tv/ptv7/phd928
+韩源18,rtmp://lm07.everyon.tv/ptv7/phd1005
+韩源19,rtmp://lm07.everyon.tv/ptv7/phd10497
+菊花20,rtmp://lm07.everyon.tv:1935/ptv7/phd129                                              韩源21,rtmp://lm07.everyon.tv:1935/ptv7/phd1003                                             韩源22,rtmp://lm07.everyon.tv:1935/ptv7/phd1005                                             韩源23,rtmp://lm07.everyon.tv:1935/ptv7/phd1006                                             韩源24,rtmp://lm07.everyon.tv:1935/ptv7/phd1008                           
+
+
+
+
+BRAZZERS,http://80.87.146.133:1111/udp/230.3.4.121:5678
+Czech Republic,mmsh://tv.webmisto.cz:7000
+DESIRE,http://84.22.33.24:8060/
+DESIRE,http://artm:artm@84.22.33.24:8060#XXX18+
+DESIRE,http://www.vlc.eu.pn@tinyurl.com/m53qj3s
+FRENCLOVER,http://80.87.146.133:1111/udp/230.3.4.150:5678
+hot,rtmp://live.2caster.com:1935/live/hot
+Russiannigt,http://80.87.146.133:1111/udp/230.3.4.110:5678
+XDesire tV,http://artm:artm@84.22.33.24:8060/
+XDesire,http://artm:artm@84.22.33.24:8060/
+XX,rtsp://81.89.48.215:1935/xyz777wkz/xy_360p
+sexprive,rtsp://85.12.5.8:1935/aovivo/sexprive
+filthon,rtmp://live190.la3.origin.filmon.com:8086/live/247.high.stream?HDXXX18+
+欧美1,http://208.122.3.2:8700/
+欧美2,http://208.122.3.2:9500/
+欧美3,http://208.122.3.2:9000/
+Bellaluz-United States,http://46.249.213.87/iPhone/broadcast/bellaluz-iphone.3gp.m3u8
+sexprive，,rtsp://85.12.5.8:1935/aovivo/sexprive
+sexysat,rtsp://81.89.48.215:1935/xyz777wkz/xy_360p
+DESIRE,http://84.22.33.24:8060/
+Czech Republic,mmsh://tv.webmisto.cz:7000
+Czech Republic,mmsh://tv.webmisto.cz:7000cr2
+ITV,mms://stream.mni.pl/ITV
+cr,http://ru-element.ru/playlist/playlist.php?ch=4&r=my
+BRAZZERS,http://80.87.146.133:1111/udp/230.3.4.121:5678
+BLAZZERS,http://80.87.146.133:1111/udp/239.195.2.4:1234
+FRENCH Lovertv,http://80.87.146.133:1111/udp/230.3.4.150:5678
+(HD)Republic Of Korea,rtmp://lm07.everyon.tv/ptv7/phd10497
+PLAYBOY1,http://80.87.146.133:1111/udp/239.195.2.5:1234
+PlayBoy2,rtmp://94.242.221.176:1937/live/stream145
+,rtmp://live190.la3.origin.filmon.com:8086/live/247.high.stream

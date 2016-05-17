@@ -1,0 +1,153 @@
+第一步：先建立一个 CA 的证书 
+首先为 CA 创建一个 RSA 私用密钥，  
+[root@rocketcnvm ssl]#openssl genrsa -des3 -out ca.key 1024 
+系统提示输入 PEM pass phrase，也就是密码，输入后牢记它。 
+生成 ca.key 文件，将文件属性改为400，并放在安全的地方。 
+[root@rocketcnvm ssl]#chmod 400 ca.key 
+你可以用下列命令查看它的内容， 
+[root@rocketcnvm ssl]# openssl rsa -noout -text -in ca.key
+
+利用 CA 的 RSA 密钥创建一个自签署的 CA 证书（X.509结构） 
+[root@rocketcnvm ssl]#openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
+然后需要输入下列信息： 
+Country Name: cn 两个字母的国家代号 
+State or Province Name: An Hui 省份名称 
+Locality Name: Bengbu 城市名称 
+Organization Name: Family Network 公司名称 
+Organizational Unit Name: Home 部门名称 
+Common Name：distinguish  name 
+Email Address: sunstorm@263.net Email地址 
+生成 ca.crt 文件，将文件属性改为400，并放在安全的地方。 
+[root@rocketcnvm ssl]#chmod 400 ca.crt 
+你可以用下列命令查看它的内容， 
+[root@rocketcnvm ssl]#openssl x509 -noout -text -in ca.crt
+
+用下面的命令也可以生成没有密码保护的CA密钥和证书文件：
+[root@rocketcnvm ssl]#openssl req -new -x509 -out ca.crt -keyout ca.key
+想给CA密钥加密码保护可以：
+[root@rocketcnvm ssl]#openssl res -des3 -in ca.key -out ca.key.new
+[root@rocketcnvm ssl]#mv ca.key.new ca.key
+
+第二步：下面要创建服务器证书签署请求， 
+首先为你的 Apache 创建一个 RSA 私用密钥： 
+[root@rocketcnvm ssl]#openssl genrsa -des3 -out server.key 1024 
+这里也要设定pass phrase。 
+生成 server.key 文件，将文件属性改为400，并放在安全的地方。 
+[root@rocketcnvm ssl]#chmod 400 server.key 
+你可以用下列命令查看它的内容， 
+[root@rocketcnvm ssl]#openssl rsa -noout -text -in server.key
+用 server.key 生成证书签署请求 CSR. 
+[root@rocketcnvm ssl]#openssl req -new -key server.key -out server.csr 
+这里也要输入一些信息，和生成ca.crt的信息类似 
+至于 'extra' attributes 不用输入。 
+“Common Name: Chen Yang 你的姓名”这条信息请你输入你的服务器的域名或者IP地址，
+你可以查看 CSR 的细节 
+[root@rocketcnvm ssl]#openssl req -noout -text -in server.csr
+
+第三步：下面可以签署证书了
+[root@rocketcnvm ssl]#openssl ca -in server.csr -out server.crt -cert ca.crt -keyfile ca.key 
+
+或者用到脚本 sign.sh 
+[root@rocketcnvm ssl]#./sign.sh server.csr 
+就可以得到server.crt。 
+将文件属性改为400，并放在安全的地方。 
+[root@rocketcnvm ssl]#chmod 400 server.crt
+sign.sh代码如下：
+
+
+#!/bin/sh
+
+##
+
+## sign.sh -- Sign a SSL Certificate Request (CSR)
+
+## Copyright (c) 1998-2001 Ralf S. Engelschall, All Rights Reserved.
+
+##
+
+
+# argument line handling
+
+CSR=$1
+if [ $# -ne 1 ]; then
+
+  echo "Usage: sign.sign <whatever>.csr"; exit 1
+fi
+if [ ! -f $CSR ]; then
+  echo "CSR not found: $CSR"; exit 1
+fi
+case $CSR in
+ *.csr ) CERT="`echo $CSR | sed -e 's/\.csr/.crt/'`" ;;
+     * ) CERT="$CSR.crt" ;;
+esac
+
+# make sure environment exists
+
+if [ ! -d ca.db.certs ]; then
+  mkdir ca.db.certs
+fi
+if [ ! -f ca.db.serial ]; then
+  echo '01' >ca.db.serial
+fi
+if [ ! -f ca.db.index ]; then
+  cp /dev/null ca.db.index
+fi
+
+# create an own SSLeay config
+
+cat >ca.config <<EOT
+[ ca ]
+default_ca = CA_own
+[ CA_own ]
+dir = .
+certs = \$dir
+new_certs_dir = \$dir/ca.db.certs
+database = \$dir/ca.db.index
+serial = \$dir/ca.db.serial
+RANDFILE = \$dir/ca.db.rand
+certificate = \$dir/ca.crt
+private_key = \$dir/ca.key
+default_days = 365
+default_crl_days = 30
+default_md = md5
+preserve = no
+policy = policy_anything
+[ policy_anything ]
+countryName = optional
+stateOrProvinceName = optional
+localityName = optional
+organizationName = optional
+organizationalUnitName = optional
+commonName = supplied
+emailAddress = optional
+EOT
+
+# sign the certificate
+
+echo "CA signing: $CSR -> $CERT:"
+openssl ca -config ca.config -out $CERT -infiles $CSR
+echo "CA verifying: $CERT <-> CA cert"
+openssl verify –Cafile ca.crt $CERT
+
+# cleanup after SSLeay
+
+rm -f ca.config
+rm -f ca.db.serial.old
+rm -f ca.db.index.old
+
+# die gracefully
+
+exit 0
+
+
+四 其它
+
+检查私钥是否于证书匹配，可以使用如下命令进行对比：
+
+[root@rocketcnvm ssl]# openssl rsa -noout -modulus -in ca.key | openssl md5
+
+Enter pass phrase for ca.key:
+86e24bf0156116c4f6617a8d980b3acd
+[root@rocketcnvm ssl]# openssl x509 -noout -modulus -in ca.crt | openssl md5
+
+86e24bf0156116c4f6617a8d980b3acd

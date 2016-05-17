@@ -1,0 +1,11 @@
+openssl pkcs12 -export -out myselfsigned.pfx -inkey private/cakey.pem -in myselfsigned.cer
+openssl pkcs12 -export -clcerts -in client.crt -inkey client.key -out client.p12 
+openssl x509 -req -in client.crt -out mycert1.cer -CAkey client.key -CA myselfsigned.cer -days 365 -CAcreateserial -CAserial serial
+openssl pkcs12 -export -out myselfsigned.pfx -inkey private/cakey.pem -in myselfsigned.cer
+openssl pkcs12 -export -clcerts -in client.crt -inkey client.key -out client.p12 
+openssl x509 -req -in client.crt -out mycert1.cer -CAkey private/cakey.pem -CA client.cer -days 365 -CAcreateserial -CAserial serial
+openssl pkcs12 -export -out myselfsigned.pfx -inkey private/cakey.pem -in myselfsigned.cer
+
+openssl req -new -x509 -key client.key -out client.cer -days 365 -subj  "/C=CN/ST=sici/L=ga/O=Your Company Name/OU=sh.solifd.com/CN=sh.solifd.com"
+
+openssl x509 -in client.p12 -inform PEM -out cert.der -outform DER

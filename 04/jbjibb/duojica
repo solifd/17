@@ -1,0 +1,43 @@
+ls |grep -v   .sh |xargs rm -rf
+touch /etc/pki/CA/index.txt
+echo 01 > /etc/pki/CA/serial
+echo 02 > /etc/pki/CA/serial
+rm -rf keys
+mkdir keys
+echo "123456" > password.txt
+mkdir -p {private,newcerts}
+
+
+#RootCA
+openssl genrsa -des3 -passout file:password.txt -out keys/RootCA.key 2048
+openssl req -new -x509 -days 3650 -key keys/RootCA.key -passin file:password.txt -out keys/RootCA.crt -sub
+j "/C=CN/ST=sici/L=ga/O=RootCA/OU=RootCA/CN=RootCA"
+
+#secondCA
+
+openssl genrsa -des3 -passout file:password.txt -out keys/secondCA.key 2048
+openssl rsa -in keys/secondCA.key -passin file:password.txt -out keys/secondCA.key
+openssl req -new -days 3650 -key keys/secondCA.key -out keys/secondCA.csr -subj "/C=CN/ST=sici/L=ga/O=Root
+CA/OU=secondCA/CN=secondCA"
+yes | openssl ca -extensions v3_ca -in keys/secondCA.csr  -days 3650 -out keys/secondCA.crt -cert keys/Roo
+tCA.crt -keyfile keys/RootCA.key  -passin file:password.txt
+
+sed -i 's/yes/no/g' index.txt.attr
+
+#thirdCA
+openssl genrsa -des3 -passout file:password.txt -out keys/thirdCA.key 2048
+openssl rsa -in keys/thirdCA.key  -passin file:password.txt  -out keys/thirdCA.key
+openssl req -new -days 3650 -key keys/thirdCA.key -out keys/thirdCA.csr -subj "/C=CN/ST=sici/L=ga/O=RootCA/OU=thirdCA/CN=thirdCA"
+yes | openssl ca -extensions v3_ca -in keys/thirdCA.csr   -days 3650 -out keys/thirdCA.crt -cert keys/secondCA.crt -keyfile keys/secondCA.key  -passin file:password.txt 
+
+openssl genrsa -des3  -passout file:password.txt -out keys/server.key 2048
+openssl rsa -in keys/server.key   -passin file:password.txt  -out keys/server.key
+openssl req -new -days 3650 -key keys/server.key -out keys/server.csr  -subj "/C=CN/ST=sici/L=ga/O=RootCA/OU=thirdCA/CN=solifd.xyz"
+yes | openssl ca -in keys/server.csr  -days 3650 -out keys/server.crt -cert keys/thirdCA.crt -keyfile keys/thirdCA.key -passin file:password.txt
+
+
+#yes |cp -r /etc/pki/CA /home/Video
+yes |cp /etc/pki/CA/keys/*.crt /home/Video
+yes | cp /etc/pki/CA/keys/server.crt /usr/local/nginx/conf/upload
+yes | cp /etc/pki/CA/keys/server.key  /usr/local/nginx/conf/upload
+service nginx restart

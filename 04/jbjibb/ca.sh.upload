@@ -1,0 +1,33 @@
+sed -i "42d" /etc/pki/tls/openssl.cnf
+sed -i '41a\dir             = /etc/pki/CA/          # Where everything is kept' /etc/pki/tls/openssl.cnf
+sed -i "42d" /usr/local/openssl/ssl/openssl.cnf
+sed -i '41a\dir             = /etc/pki/CA/           # Where everything is kept' /usr/local/openssl/ssl/openssl.cnf
+
+cd /etc/pki/CA/
+rm -rf * 
+mkdir root server client newcerts private
+echo 01 > serial
+echo 01 > crlnumber
+touch index.txt
+umask 077;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096
+openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/cacert.pem -days 7 -subj "/C=CN/ST=sici/L=ga/O=Your infopany Name/OU=sh.solifd.info/CN=upload.solifd.com"
+
+openssl req -new -out /etc/pki/CA/ca-req.csr -key /etc/pki/CA/private/cakey.pem -days 7 -subj "/C=CN/ST=sici/L=ga/O=Your infopany Name/OU=sh.solifd.info/CN=upload.solifd.com"
+
+yes | openssl x509 -req -in /etc/pki/CA/ca-req.csr -out /etc/pki/CA/ca-cert.pem -signkey /etc/pki/CA/private/cakey.pem -days 7
+
+
+
+sed -i 's/yes/no/g' index.txt.attr
+
+
+umask 077;openssl genrsa -out /etc/pki/CA/client/client.key 2048
+openssl req -new -key /etc/pki/CA/client/client.key -out /etc/pki/CA/client/client.csr -subj "/C=CN/ST=sici/L=ga/O=Your infopany Name/OU=sh.solifd.info/CN=upload.solifd.com"
+yes | openssl ca -in /etc/pki/CA/client/client.csr -out /etc/pki/CA/client/client.crt -days 7
+
+openssl pkcs12 -export -passout pass:11816466  -out /root/1.pfx -inkey /etc/pki/CA/client/client.key -in /etc/pki/CA/client/client.crt
+
+/etc/init.d/nginx reload
+#echo Test | mutt -s ssl  backup 11816466@qq.com -a /root/1.pfx
+#sh /root/test
+#find / -name  1.pfx |xargs rm -rf 

@@ -1,0 +1,27 @@
+#!/bin/bash
+function startftp() { echo "begin to start ftp services";
+/etc/init.d/pureftpd start
+}
+function stopftp() { echo "begin to stop ftp services";
+
+
+       /etc/init.d/pureftpd stop
+}
+
+function restartftp() { echo "begin to restart ftp services";
+
+
+       /etc/init.d/pureftpd restart
+}
+echo "which do you want to?input the number."
+echo "1. start.ftp"
+echo "2. stop.ftp"
+echo "3. restart.ftp"
+read num
+
+case "$num" in
+[1] ) (startftp);;
+[2] ) (stopftp);;
+[3] ) (restartftp);;
+*) echo "nothing,exit";;
+esac

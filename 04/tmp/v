@@ -1,0 +1,5 @@
+sh dropbox_uploader.sh download backup20150218 /tmp/backup20150218
+cd /tmp/backup20150218
+cat backup* >backup.des3
+ 
+dd if=backup.des3  |openssl des3 -d -k 5zq2o3y5ec|tar zxf -

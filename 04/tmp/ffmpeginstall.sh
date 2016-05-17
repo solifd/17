@@ -1,0 +1,26 @@
+./faac.sh
+vi common/mp4v2/mpeg4ip.h
+./lame.sh
+./libogg.sh
+./libtheora.sh
+./libvorbis.sh
+./vo-aacenc.sh
+./xvidcore.sh
+./yasm
+./x264.sh
+./libdc1394.sh
+./libraw1394.sh
+./libfreetype
+./fribidi
+./fonconfig
+./libass
+./openssl
+./rtmpdump
+./libspeex
+./twolame
+./libdts.sh
+./a52dec.sh
+./faad2.sh
+./amrnb.sh
+./amrwb.sh
+./ffmpeg

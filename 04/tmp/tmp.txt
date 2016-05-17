@@ -1,0 +1,3 @@
+174 109
+create vdisk file=E:\win.vhd parent=E:\win.base0.vhd
+mysqldump --user=root --password=ggflying --lock-all-tables --events --ignore-table=mysql.events >databasename$(date +"%Y%m%d-%H").sql

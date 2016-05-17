@@ -1,0 +1,6 @@
+tar zcvf /web/tx/bt.tar.gz bt
+
+
+tar zcvf nginx.tar.gz nginx
+./dropbox_uploader.sh upload nginx.tar.gz nginx.tar.gz
+rm -rf nginx.tar.gz

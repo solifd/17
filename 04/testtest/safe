@@ -1,0 +1,802 @@
+一、用户帐号和环境……………………………………………………………………………………. 2
+
+二、系统访问认证和授权……………………………………………………………………………… 3
+
+三、核心调整……………………………………………………………………………………………… 4
+
+四、需要关闭的一些服务……………………………………………………………………………… 5
+
+五、SSH安全配置……………………………………………………………………………………….. 5
+
+六、封堵openssl的Heartbleed漏洞…………………………………………………………………. 6
+
+七、开启防火墙策略……………………………………………………………………………………. 6
+
+八、启用系统审计服务…………………………………………………………………………………. 8
+
+九、部署完整性检查工具软件………………………………………………………………………. 10
+
+十、部署系统监控环境……………………………………………………………………………….. 11
+
+以下安全设置均是在CentOS7.0_x64环境下minimal安装进行的验证。
+
+一、用户帐号和环境
+
+ 	 检查项	 注释:
+1	 清除了operator、lp、shutdown、halt、games、gopher 帐号
+ 
+
+删除的用户组有： lp、uucp、games、dip
+
+其它系统伪帐号均处于锁定SHELL登录的状态
+
+ 
+
+ 
+2	 验证是否有账号存在空口令的情况:
+ 
+
+awk -F:   ‘($2 == “”) { print $1 }’ /etc/shadow
+
+ 
+
+ 
+3	 检查除了root以外是否还有其它账号的UID为0:
+ 
+
+awk -F:   ‘($3 == 0) { print $1 }’ /etc/passwd
+
+ 
+
+任何UID为0的账号在系统上都具有超级用户权限.
+4	 检查root用户的$PATH中是否有’.’或者所有用户/组用户可写的目录	 超级用户的$PATH设置中如果存在这些目录可能会导致超级用户误执行一个特洛伊木马
+5	 用户的home目录许可权限设置为700	 用户home目录的许可权限限制不严可能会导致恶意用户读/修改/删除其它用户的数据或取得其它用户的系统权限
+6	 是否有用户的点文件是所有用户可读写的:
+ 
+
+for dir   in \
+
+`awk -F:   ‘($3 >= 500) { print $6 }’ /etc/passwd`
+
+do
+
+for file   in $dir/.[A-Za-z0-9]*
+
+do
+
+if [ -f   $file ]; then
+
+chmod o-w   $file
+
+fi
+
+done
+
+done
+
+ 
+
+Unix/Linux下通常以”.”开头的文件是用户的配置文件,如果存在所有用户可读/写的配置文件可能会使恶意用户能读/写其它用户的数据或取得其它用户的系统权限
+7	 为用户设置合适的缺省umask值:
+ 
+
+cd /etc
+
+for file   in profile csh.login csh.cshrc bashrc
+
+do
+
+if [   `grep -c umask $file` -eq 0 ];
+
+then
+
+echo   “umask 022″ >> $file
+
+fi
+
+chown   root:root $file
+
+chmod 444   $file
+
+done
+
+ 
+
+为用户设置缺省的umask值有助于防止用户建立所有用户可写的文件而危及用户的数据.
+8	 设备系统口令策略：修改/etc/login.defs文件
+ 
+
+将PASS_MIN_LEN最小密码长度设置为12位。
+
+ 
+ 	  	  
+10	 限制能够su为root 的用户：#vi /etc/pam.d/su
+ 
+
+在文件头部添加下面这样的一行
+
+auth           required        pam_wheel.so use_uid
+
+这样，只有wheel组的用户可以su到root
+ 
+
+操作样例：
+
+#usermod   -G10 test 将test用户加入到wheel组
+
+11	 修改别名文件/etc/aliases：#vi /etc/aliases
+ 
+
+注释掉不要的   #games: root #ingres: root #system: root #toor: root #uucp: root #manager:   root #dumper: root #operator: root #decode: root #root: marc
+
+修改后执行/usr/bin/newaliases
+
+ 
+ 	  	  
+13	 修改帐户TMOUT值，设置自动注销时间
+ 
+
+vi /etc/profile
+
+增加TMOUT=600
+
+无操作600秒后自动退出
+14	 设置Bash保留历史命令的条数
+ 
+
+#vi /etc/profile
+
+修改HISTSIZE=5
+
+即只保留最新执行的5条命令
+ 	  	  
+16	 防止IP   SPOOF：
+ 
+
+#vi /etc/host.conf 添加：nospoof on
+
+不允许服务器对IP地址进行欺骗
+17	 使用日志服务器：
+ 
+
+#vi /etc/rsyslog.conf 照以下样式修改
+
+*.info;mail.none;authpriv.none;cron.none    @192.168.10.199
+
+ 
+
+这里只是作为参考，需要根据实际决定怎么配置参数
+ 
+
+ 
+
+二、系统访问认证和授权
+
+ 	 检查项	 注释:
+1	 限制   at/cron给授权的用户:
+ 
+
+cd /etc/
+
+rm -f   cron.deny at.deny
+
+echo root   >cron.allow
+
+echo root   >at.allow
+
+chown   root:root cron.allow at.allow
+
+chmod 400   cron.allow at.allow
+
+ 
+
+Cron.allow和at.allow文件列出了允许允许crontab和at命令的用户名单, 在多数系统上通常只有系统管理员才需要运行这些命令
+5	 Crontab文件限制访问权限:
+ 
+
+chown   root:root /etc/crontab
+
+chmod 400   /etc/crontab
+
+chown -R   root:root /var/spool/cron
+
+chmod -R   go-rwx /var/spool/cron
+
+chown -R   root:root /etc/cron.*
+
+chmod -R   go-rwx /etc/cron.*
+
+ 
+
+系统的crontab文件应该只能被cron守护进程(它以超级用户身份运行)来访问,一个普通用户可以修改crontab文件会导致他可以以超级用户身份执行任意程序
+6	 建立恰当的警告banner:
+ 
+
+echo   “Authorized uses only. All activity may be \
+
+monitored   and reported.” >>/etc/motd
+
+chown   root:root /etc/motd
+
+chmod 644   /etc/motd
+
+echo   “Authorized uses only. All activity may be \
+
+monitored   and reported.” >> /etc/issue
+
+echo   “Authorized uses only. All activity may be \
+
+monitored   and reported.” >> /etc/issue.net
+
+改变登录banner可以隐藏操作系统类型和版本号和其它系统信息,这些信息可以会对攻击者有用.
+7	 限制root登录到系统控制台:
+ 
+
+cat   <<END_FILE >/etc/securetty
+
+tty1
+
+tty2
+
+tty3
+
+tty4
+
+tty5
+
+tty6
+
+END_FILE
+
+chown   root:root /etc/securetty
+
+chmod 400   /etc/securetty
+
+ 
+
+通常应该以普通用户身份访问系统,然后通过其它授权机制(比如su命令和sudo)来获得更高权限,这样做至少可以对登录事件进行跟踪
+8	 设置守护进程掩码
+ 
+
+vi /etc/rc.d/init.d/functions
+
+设置为 umask 022
+
+系统缺省的umask 值应该设定为022以避免守护进程创建所有用户可写的文件
+ 
+
+ 
+
+三、核心调整
+
+ 	 设置项	 注释:
+1	 禁止core   dump:
+ 
+
+cat <<END_ENTRIES   >>/etc/security/limits.conf
+
+* soft core 0
+
+* hard core 0
+
+END_ENTRIES
+
+允许core   dump会耗费大量的磁盘空间.
+2	 chown root:root /etc/sysctl.conf
+ 
+
+chmod 600 /etc/sysctl.conf
+
+log_martians将进行ip假冒的ip包记录到/var/log/messages
+ 
+
+其它核心参数使用CentOS默认值。
+
+ 
+
+四、需要关闭的一些服务
+
+ 	 设置项	 注释:
+1	 关闭Mail   Server
+ 
+
+chkconfig postfix off
+
+多数Unix/Linux系统运行Sendmail作为邮件服务器, 而该软件历史上出现过较多安全漏洞,如无必要,禁止该服务
+ 
+
+五、SSH安全配置
+
+ 	 设置项	 注释:
+1	 配置空闲登出的超时间隔:
+ 
+
+ClientAliveInterval 300
+
+ClientAliveCountMax 0
+
+Vi /etc/ssh/sshd_config
+ 
+
+ 
+
+2	 禁用   .rhosts 文件
+ 
+
+IgnoreRhosts yes
+
+Vi /etc/ssh/sshd_config
+ 
+
+ 
+
+3	 禁用基于主机的认证
+ 
+
+HostbasedAuthentication no
+
+Vi /etc/ssh/sshd_config
+ 
+
+ 
+
+4	 禁止   root 帐号通过 SSH   登录
+ 
+
+PermitRootLogin no
+
+Vi /etc/ssh/sshd_config
+ 
+
+ 
+
+5	 用警告的   Banner
+ 
+
+Banner /etc/issue
+
+Vi /etc/ssh/sshd_config
+ 
+
+ 
+
+6	 iptables防火墙处理 SSH 端口 # 64906
+ 
+
+-A INPUT -s 192.168.1.0/24 -m state –state NEW   -p tcp –dport 64906 -j ACCEPT
+
+-A INPUT -s 202.54.1.5/29 -m state –state NEW -p   tcp –dport 64906 -j ACCEPT
+
+这里仅作为参考，需根据实际需要调整参数
+7	 修改 SSH   端口和限制 IP 绑定：
+ 
+
+Port 64906
+
+ 
+
+安装selinux管理命令
+
+yum -y install policycoreutils-python
+
+修改   port contexts（关键），需要对context进行修改
+
+semanage port -a -t ssh_port_t -p tcp 64906
+
+semanage port -l | grep ssh      —-查看当前SElinux 允许的ssh端口
+
+Vi /etc/ssh/sshd_config
+ 
+
+仅作为参考，需根据实际需要调整参数。
+
+ 
+
+8	 禁用空密码：
+ 
+
+PermitEmptyPasswords no
+
+禁止帐号使用空密码进行远程登录SSH
+9	 记录日志：
+ 
+
+LogLevel    INFO
+
+确保在   sshd_config 中将日志级别   LogLevel 设置为   INFO 或者   DEBUG，可通过 logwatch or
+ 
+
+logcheck 来阅读日志。
+
+10	 重启SSH
+ 
+
+systemctl restart sshd.service
+
+重启ssh
+ 
+
+ 
+
+ 
+
+六、封堵openssl的Heartbleed漏洞
+
+ 
+
+检测方法：在服务器上运行以下命令确认openssl版本
+
+# openssl version
+
+OpenSSL 1.0.1e-fips 11 Feb 2013
+
+以上版本的openssl存在Heartbleed bug，需要有针对性的打补丁。
+
+升及补丁：
+
+#yum -y install openssl
+
+验证：
+
+# openssl version -a
+
+OpenSSL 1.0.1e-fips 11 Feb 2013
+
+built on: Thu Jun  5 12:49:27 UTC 2014
+
+以上built on 的时间是2014.6.5号，说明已经修复了该漏洞。
+
+注：如果能够临时联网安装以上补丁，在操作上会比较简单一些。如果无法联网，则有两种处理办法：首选从安装光盘拷贝独立的rpm安装文件并更新；另一个办法是提前下载最新版本的openssl源码，编译并安装。
+
+ 
+
+ 
+
+七、开启防火墙策略
+
+在CentOS7.0中默认使用firewall代替了iptables service。虽然继续保留了iptables命令，但已经仅是名称相同而已。除非手动删除firewall，再安装iptables，否则不能继续使用以前的iptables配置方法。以下介绍的是firewall配置方法：
+
+#cd /usr/lib/firewalld/services   //该目录中存放的是定义好的网络服务和端口参数，只用于参考，不能修改。这个目录中只定义了一部分通用网络服务。在该目录中没有定义的网络服务，也不必再增加相关xml定义，后续通过管理命令可以直接增加。
+#cd /etc/firewalld/services/                  //从上面目录中将需要使用的服务的xml文件拷至这个目录中，如果端口有变化则可以修改文件中的数值。
+ 
+
+# Check firewall state.
+firewall-cmd --state
+ 
+# Check active zones.
+firewall-cmd --get-active-zones
+ 
+# Check current active services.
+firewall-cmd --get-service
+ 
+# Check services that will be active after next reload.
+firewall-cmd --get-service --permanent
+ 
+
+查看firewall当前的配置信息，最后一个命令是查看写入配置文件的信息。
+# # Set permanent and reload the runtime config.
+# firewall-cmd --permanent --zone=public --add-service=http
+# firewall-cmd --reload
+# firewall-cmd --permanent --zone=public --list-services
+打开HTTP服务端口并写入配置文件
+ 
+
+从配置文件中重载至运行环境中。
+
+# firewall-cmd --permanent --zone=public --remove-service=https
+# firewall-cmd --reload
+从已有配置中删除一个服务端口
+# firewall-cmd --permanent --zone=public --add-port=8080-8081/tcp
+# firewall-cmd --reload
+ 
+# firewall-cmd --zone=public --list-ports
+8080-8081/tcp
+# firewall-cmd --permanent --zone=public --list-ports
+8080-8081/tcp
+#
+ 
+# firewall-cmd --permanent --zone=public --remove-port=8080-8081/tcp
+# firewall-cmd --reload
+打开或关闭一段TCP端口的方法，同理如果使用了其它非通用端口，那么也可以这么操作。
+# firewall-cmd --permanent --zone=public --add-rich-rule="rule family="ipv4" \
+    source address="192.168.0.4/24" service name="http" accept"
+# firewall-cmd --permanent --zone=public --remove-rich-rule="rule family="ipv4" \
+    source address="192.168.0.4/24" service name="http" accept"
+The following command allows you to open/close   HTTP access to a specific IP address.
+ 	  
+ 
+
+ 
+
+八、启用系统审计服务
+
+审计内容包括：系统调用、文件访问、用户登录等。编辑/etc/audit/audit.rules,在文中添加如下内容：
+
+ 
+
+-w /var/log/audit/ -k LOG_audit
+
+-w /etc/audit/ -p wa -k CFG_audit
+
+-w /etc/sysconfig/auditd -p wa -k CFG_auditd.conf
+
+-w /etc/libaudit.conf -p wa -k CFG_libaudit.conf
+
+-w /etc/audisp/ -p wa -k CFG_audisp
+
+-w /etc/cups/ -p wa -k CFG_cups
+
+-w /etc/init.d/cups -p wa -k CFG_initd_cups
+
+-w /etc/netlabel.rules -p wa -k CFG_netlabel.rules
+
+-w /etc/selinux/mls/ -p wa -k CFG_MAC_policy
+
+-w /usr/share/selinux/mls/ -p wa -k CFG_MAC_policy
+
+-w /etc/selinux/semanage.conf -p wa -k CFG_MAC_policy
+
+-w /usr/sbin/stunnel -p x
+
+-w /etc/security/rbac-self-test.conf -p wa -k CFG_RBAC_self_test
+
+-w /etc/aide.conf -p wa -k CFG_aide.conf
+
+-w /etc/cron.allow -p wa -k CFG_cron.allow
+
+-w /etc/cron.deny -p wa -k CFG_cron.deny
+
+-w /etc/cron.d/ -p wa -k CFG_cron.d
+
+-w /etc/cron.daily/ -p wa -k CFG_cron.daily
+
+-w /etc/cron.hourly/ -p wa -k CFG_cron.hourly
+
+-w /etc/cron.monthly/ -p wa -k CFG_cron.monthly
+
+-w /etc/cron.weekly/ -p wa -k CFG_cron.weekly
+
+-w /etc/crontab -p wa -k CFG_crontab
+
+-w /var/spool/cron/root -k CFG_crontab_root
+
+-w /etc/group -p wa -k CFG_group
+
+-w /etc/passwd -p wa -k CFG_passwd
+
+-w /etc/gshadow -k CFG_gshadow
+
+-w /etc/shadow -k CFG_shadow
+
+-w /etc/security/opasswd -k CFG_opasswd
+
+-w /etc/login.defs -p wa -k CFG_login.defs
+
+-w /etc/securetty -p wa -k CFG_securetty
+
+-w /var/log/faillog -p wa -k LOG_faillog
+
+-w /var/log/lastlog -p wa -k LOG_lastlog
+
+-w /var/log/tallylog -p wa -k LOG_tallylog
+
+-w /etc/hosts -p wa -k CFG_hosts
+
+-w /etc/sysconfig/network-scripts/ -p wa -k CFG_network
+
+-w /etc/inittab -p wa -k CFG_inittab
+
+-w /etc/rc.d/init.d/ -p wa -k CFG_initscripts
+
+-w /etc/ld.so.conf -p wa -k CFG_ld.so.conf
+
+-w /etc/localtime -p wa -k CFG_localtime
+
+-w /etc/sysctl.conf -p wa -k CFG_sysctl.conf
+
+-w /etc/modprobe.conf -p wa -k CFG_modprobe.conf
+
+-w /etc/pam.d/ -p wa -k CFG_pam
+
+-w /etc/security/limits.conf -p wa -k CFG_pam
+
+-w /etc/security/pam_env.conf -p wa -k CFG_pam
+
+-w /etc/security/namespace.conf -p wa -k CFG_pam
+
+-w /etc/security/namespace.init -p wa -k CFG_pam
+
+-w /etc/aliases -p wa -k CFG_aliases
+
+-w /etc/postfix/ -p wa -k CFG_postfix
+
+-w /etc/ssh/sshd_config -k CFG_sshd_config
+
+-w /etc/vsftpd.ftpusers -k CFG_vsftpd.ftpusers
+
+-a exit,always -F arch=b32 -S sethostname
+
+-w /etc/issue -p wa -k CFG_issue
+
+-w /etc/issue.net -p wa -k CFG_issue.net
+
+重启audit服务
+
+#service auditd  restart
+
+ 
+
+ 
+
+九、部署完整性检查工具软件
+
+AIDE(Advanced Intrusion Detection Environment,高级入侵检测环境)是个入侵检测工具，主要用途是检查文档的完整性。
+
+AIDE能够构造一个指定文档的数据库，他使用aide.conf作为其配置文档。AIDE数据库能够保存文档的各种属性，包括：权限(permission)、索引节点序号(inode number)、所属用户(user)、所属用户组(group)、文档大小、最后修改时间(mtime)、创建时间(ctime)、最后访问时间(atime)、增加的大小连同连接数。AIDE还能够使用下列算法：sha1、md5、rmd160、tiger，以密文形式建立每个文档的校验码或散列号。
+
+在系统安装完毕，要连接到网络上之前，系统管理员应该建立新系统的AIDE数据库。这第一个AIDE数据库是系统的一个快照和以后系统升级的准绳。数据库应该包含这些信息：关键的系统二进制可执行程式、动态连接库、头文档连同其他总是保持不变的文档。这个数据库不应该保存那些经常变动的文档信息，例如：日志文档、邮件、/proc文档系统、用户起始目录连同临时目录
+
+安装方法：
+
+#yum -y install aide
+
+注：如果主机不能联网安装AIDE，那么也可以从安装光盘拷贝至目标主机。
+
+ 
+
+检验系统文件完整性的要求：
+
+因为AIDE可执行程序的二进制文档本身可能被修改了或数据库也被修改了。因此，应该把AIDE的数据库放到安全的地方，而且进行检查时要使用确保没有被修改过的程序，最好是事先为AIDE执行程序生成一份MD5信息。再次使用AIDE可执行程序时，需要先验证该程序没有被篡改过。
+
+ 
+
+配置说明：
+
+序号	 参数	 注释
+1	 /etc/aide.conf	 配置文件
+2	 database	 Aide读取文档数据库的位置，默认为/var/lib/aide，默认文件名为aide.db.gz
+3	 database_out	 Aide生成文档数据库的存放位置，默认为/var/lib/aide，默认文件名为aide.db.new.gz
+ 	 database_new	 在使用aide   –compare命令时，需要在aide.conf中事先设置好database_new并指向需要比较的库文件
+4	 report_url	 /var/log/aide，入侵检测报告的存放位置
+5	 其它参数继续使用默认值即可。
+ 
+
+ 
+
+建立、更新样本库：   
+
+1）执行初始化，建立第一份样本库
+
+# aide –init
+
+# cd /var/lib/aide/
+
+# mv aide.db.new.gz aide.db.gz   //替换旧的样本库
+
+2）更新到样本库
+
+#aide –update
+
+# cd /var/lib/aide/
+
+# mv aide.db.new.gz aide.db.gz   //替换旧的样本库
+
+ 
+
+执行aide入侵检测：
+
+1）查看入侵检测报告
+
+#aide –check
+
+报告的详细程度可以通过-V选项来调控，级别为0-255，-V0 最简略，-V255 最详细。
+
+或
+
+#aide –compare
+
+这个命令要求在配置文件中已经同时指定好了新、旧两个库文件。
+
+2）保存入侵检测报告（将检查结果保存到其他文件）
+
+aide –check –report=file：/tmp/aide-report-20120426.txt
+
+3）定期执行入侵检测，并发送报告
+
+# crontab -e
+
+45 17 * * * /usr/sbin/aide -C -V4 | /bin/mail -s ”AIDE REPORT $（date +%Y%m%d）” abcdefg#163.com
+
+或
+
+45 23 * * * aide -C >> /var/log/aide/’date +%Y%m%d’_aide.log
+
+ 
+
+记录aide可执行文件的md5 checksum：
+
+#md5sum /usr/sbin/aide
+
+ 
+
+ 
+
+十、部署系统监控环境
+
+该段落因为需要安装或更新较多的依赖包，所以目前仅作为参考。
+
+为了在将来合适的时候，可以支持通过一台集中的监控主机全面监控主机系统和网络设备的运行状态、网络流量等重要数据，可以在安全加固主机的系统中预先安装和预留了系统监控软件nagios和cacti在被监控主机中需要使用的软件支撑环境。
+
+由于以下软件在安装过程中需要使用源码编译的方式，由此而引发需要安装GCC和OPENSSL-DEVEL。而为了安装GCC和OPENSSL-DEVEL而引发的依赖包的安装和更新大约有20个左右。这就违返了安全加固主机要保持最小可用系统的设计原则，所以该部分监控软件支撑环境的部署工作不作为默认设置，但仍然通过下文给出了部署参考，以用于系统运行运维过程中需要部署全局性监控系统时使用。
+
+ 
+
+1）安装net-snmp服务
+
+#yum -y install net-snmp
+
+#chkconfig snmpd off     —将该服务设置为默认关闭，这里只是为以后部署cacti先预置一个支撑环境
+
+ 
+
+如果不能联网安装，则可以使用安装光盘，并安装以下几个rpm包：
+
+lm_sensors  ， net-snmp  ,  net-snmp-libs  ,   net-snmp-utils
+
+ 
+
+2）安装nagios-plugin和nrpe
+
+ 
+
+a. 增加用户&设定密码
+
+# useradd nagios
+
+# passwd nagios
+
+b. 安装Nagios 插件
+
+# tar zxvf nagios-plugins-2.0.3.tar.gz
+
+# cd nagios-plugins-2.0.3
+
+# ./configure –prefix=/usr/local/nagios
+
+# make && make install
+
+这一步完成后会在/usr/local/nagios/下生成三个目录include、libexec和share。
+
+修改目录权限
+
+# chown nagios.nagios /usr/local/nagios
+
+# chown -R nagios.nagios /usr/local/nagios/libexec
+
+c. 安装NRPE
+
+# tar zxvf nrpe-2.15.tar.gz
+
+# cd nrpe-2.15
+
+# ./configure
+
+# make all
+
+接下来安装NPRE插件，daemon和示例配置文件。
+
+c.1 安装check_nrpe 这个插件
+
+# make install-plugin
+
+监控机需要安装check_nrpe 这个插件，被监控机并不需要，在这里安装它只是为了测试目的。
+
+c.2 安装deamon
+
+# make install-daemon
+
+c.3 安装配置文件
+
+# make install-daemon-config
+
+现在再查看nagios 目录就会发现有5个目录了

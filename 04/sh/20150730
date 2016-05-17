@@ -1,0 +1,4 @@
+cd /tmp && mkdir vps"$(date +"%Y%m%d") && cd vps"$(date +"%Y%m%d")
+tar zcvf vps.tar.gz /shell /root /web/ /home/solifd
+split -b 100m -a 3 -d vps.tar.gz  vps.tar.gz.part
+sh /root/dropbox_uploader.sh upload vps"$(date +"%Y%m%d") vps"$(date +"%Y%m%d") 

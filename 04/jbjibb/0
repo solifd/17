@@ -1,0 +1,407 @@
+http://pan.baidu.com/s/1i3rHAwX
+
+
+
+dsc1
+
+http://www.jb51.net/article/57012.htm
+
+
+
+http://www.cnblogs.com/dyllove98/p/3157370.html
+
+
+
+useradd  levelip -g www -d /web/ex.solifd.com -M
+
+passwd levelip
+
+
+
+
+
+.1 openssl目录准备
+
+一般情况下openssl的配置文件都在这个目录/etc/pki/tls，so：
+
+
+
+mkdir /etc/pki/ca_linvo
+
+
+
+cd /etc/pki/ca_linvo
+
+
+
+mkdir root server client newcerts
+
+
+
+echo 01 > serial
+
+
+
+echo 01 > crlnumber
+
+
+
+touch index.txt
+
+
+
+1.2 openssl配置准备
+
+ 
+
+
+
+修改openssl配置
+
+
+
+vi /etc/pki/tls/openssl.cnf
+
+
+
+找到这句注释掉，替换为下面那句
+
+
+
+#default_ca      = CA_default
+
+
+
+default_ca      = CA_linvo
+
+
+
+把[ CA_default ]整个部分拷贝一份，改成上面的名字[ CA_linvo ]
+
+
+
+修改里面的如下参数：
+
+
+
+dir = /etc/pki/ca_linvo
+
+
+
+certificate = $dir/root/ca.crt
+
+
+
+private_key = $dir/root/ca.key
+
+
+
+保存退出
+
+
+
+2 创建CA根级证书
+
+生成key： openssl genrsa -out /etc/pki/ca_linvo/root/ca.key
+
+生成csr：openssl req -new -key /etc/pki/ca_linvo/root/ca.key -out /etc/pki/ca_linvo/root/ca.csr
+
+
+
+生成crt：openssl x509 -req -days 3650 -in /etc/pki/ca_linvo/root/ca.csr -signkey /etc/pki/ca_linvo/root/ca.key -out /etc/pki/ca_linvo/root/ca.crt
+
+
+
+生成crl：openssl ca -gencrl -out /etc/pki/ca_linvo/root/ca.crl -crldays 7
+
+
+
+生成的根级证书文件都在/etc/pki/ca_linvo/root/目录下
+
+
+
+注意：创建证书时，建议证书密码设置长度>=6位，因为java的keytool工具貌似对它有要求。
+
+
+
+3 创建server证书
+
+生成key：openssl genrsa -out /etc/pki/ca_linvo/server/server.key
+
+
+
+生成csr：openssl req -new -key /etc/pki/ca_linvo/server/server.key -out /etc/pki/ca_linvo/server/server.csr
+
+
+
+生成crt：openssl ca -in /etc/pki/ca_linvo/server/server.csr -cert /etc/pki/ca_linvo/root/ca.crt -keyfile /etc/pki/ca_linvo/root/ca.key -out /etc/pki/ca_linvo/server/server.crt -days 3650
+
+说明：
+
+
+
+1、这里生成的crt是刚才ca根级证书下的级联证书，其实server证书主要用于配置正常单向的https，所以不使用级联模式也可以：
+
+
+
+openssl rsa -in /etc/pki/ca_linvo/server/server.key -out /etc/pki/ca_linvo/server/server.key
+
+openssl x509 -req -in /etc/pki/ca_linvo/server/server.csr -signkey /etc/pki/ca_linvo/server/server.key -out /etc/pki/ca_linvo/server/server.crt -days 3650
+
+2、-days 参数可根据需要设置证书的有效期，例如默认365天
+
+
+
+4 创建client证书
+
+生成key：openssl genrsa -des3 -out /etc/pki/ca_linvo/client/client.key 1024
+
+
+
+生成csr：openssl req -new -key /etc/pki/ca_linvo/client/client.key -out /etc/pki/ca_linvo/client/client.csr
+
+
+
+生成crt：openssl ca -in /etc/pki/ca_linvo/client/client.csr -cert /etc/pki/ca_linvo/root/ca.crt -keyfile /etc/pki/ca_linvo/root/ca.key -out /etc/pki/ca_linvo/client/client.crt -days 3650
+
+说明：
+
+
+
+1、这里就必须使用级联证书，并且可以重复该步骤，创建多套client证书
+
+
+
+2、生成crt时可能会遇到如下报错：
+
+
+
+openssl TXT_DB error number 2 failed to update database
+
+可参照这里进行操作。
+
+
+
+我使用的是方法一，即将index.txt.attr中unique_subject = no
+
+
+
+5 配置nginx
+
+这里只列出server段的关键部分：
+
+
+
+ssl_certificate  /etc/pki/ca_linvo/server/server.crt;#server公钥
+
+ssl_certificate_key  /etc/pki/ca_linvo/server/server.key;#server私钥
+
+ssl_client_certificate   /etc/pki/ca_linvo/root/ca.crt;#根级证书公钥，用于验证各个二级client
+
+ssl_verify_client on;
+
+重启Nginx
+
+
+
+6 测试
+
+6.1 浏览器测试
+
+由于是双向认证，直接通过浏览器访问https地址是被告知400 Bad Request（No required SSL certificate was sent）的，需要在本机安装client证书。
+
+windows上安装的证书需要pfx格式，也叫p12格式，生成方式如下：
+
+openssl pkcs12 -export -inkey /etc/pki/ca_linvo/client/client.key -in /etc/pki/ca_linvo/client/client.crt -out /etc/pki/ca_linvo/client/client.pfx 
+
+然后考到windows中双击即可进行安装，安装时会提示输入生成证书时设置的密码。
+
+安装成功后，重启浏览器输入网址访问，浏览器可能会提示你选择证书，选择刚才安装的那个证书即可。
+
+此时有些浏览器会提示用户该证书不受信任，地址不安全之类，这是因为我们的server证书是我们自己颁发的，而非真正的权威CA机构颁布（通常很贵哦~），忽略它既可。
+
+6.2 php curl测试
+
+这里只列出关键的需要设置的curl参数：
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // 信任任何证书，不是CA机构颁布的也没关系
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 1); // 检查证书中是否设置域名，如果不想验证也可设为0
+
+        curl_setopt($ch, CURLOPT_VERBOSE, '1'); //debug模式，方便出错调试
+
+        curl_setopt($ch, CURLOPT_SSLCERT, CLIENT_CRT); //client.crt文件路径，这里我用常量代替
+
+        curl_setopt($ch, CURLOPT_SSLCERTPASSWD, CRT_PWD); //client证书密码
+
+        curl_setopt($ch, CURLOPT_SSLKEY, CLIENT_KEY); //client.key文件路径
+
+如果出现白板页没有返回信息，一般是证书或密码没有设置正确的问题，请检查。 
+
+6.3 php soap测试
+
+首先需要构建client的pem格式证书，通过openssl命令也可以，不过因为我们已经有了crt和key，所以手动合并也很简单：
+
+
+
+新建一个文件，把crt中-----BEGIN CERTIFICATE-----和-----END CERTIFICATE-----之间的base64内容（包括这两个分割线）拷贝进去，然后把key中-----BEGIN RSA PRIVATE KEY-----和-----END RSA PRIVATE KEY-----之间的内容也复制进去，然后保存为client.pem即可。
+
+
+
+其实更省事的话可以如下命令，直接合并两个文件：
+
+
+
+cat /etc/pki/ca_linvo/client/client.crt /etc/pki/ca_linvo/client/client.key > /etc/pki/ca_linvo/client/client.pem
+
+有了pem文件，下面可以使用php内置的SoapClient进行调用，构造函数需要设置第二个参数：
+
+
+
+ 
+
+
+
+	$header = array(		
+
+		'local_cert' => CLIENT_PEM, //client.pem文件路径
+
+		'passphrase' => CRT_PWD //client证书密码
+
+		);
+
+	$client = new SoapClient(FILE_WSDL, $header); //FILE_WSDL为要访问的https地址
+
+上一篇博客里最后说到local_cert设置成远程路径的话会报错，好像是因为第一次获取wsdl时并没有使用client证书的原因，需要将wsdl保持成本地文件进行调用；
+
+2、使用openssl实现证书中心
+
+由于是使用openssl架设私有证书中心，因此要保证以下字段在证书中心的证书、服务端证书、客户端证书中都相同
+
+Country Name
+
+State or Province Name
+
+Locality Name
+
+Organization Name
+
+Organizational Unit Name
+
+编辑证书中心配置文件
+
+vim /etc/pki/tls/openssl.cnf
+
+[ CA_default ]
+
+dir             = /etc/pki/CA
+
+certs           = $dir/certs            # Where the issued certs are kept
+
+crl_dir         = $dir/crl              # Where the issued crl are kept
+
+database        = $dir/index.txt        # database index file.
+
+#unique_subject = no                    # Set to 'no' to allow creation of
+
+                                       # several ctificates with same subject.
+
+new_certs_dir   = $dir/newcerts         # default place for new certs.
+
+certificate     = $dir/cacert.pem       # The CA certificate
+
+serial          = $dir/serial           # The current serial number
+
+crlnumber       = $dir/crlnumber        # the current crl number                                        # must be commented out to leave a V1 CRL
+
+crl             = $dir/crl.pem          # The current CRL
+
+private_key     = $dir/private/cakey.pem# The private key
+
+RANDFILE        = $dir/private/.rand    # private random number file
+
+[ req_distinguished_name ]
+
+countryName                     = Country Name(2 letter code)
+
+countryName_default             = CN
+
+countryName_min                 = 2
+
+countryName_max                 = 2
+
+stateOrProvinceName             = State or Province Name (full name)
+
+stateOrProvinceName_default     = FJ
+
+localityName                    = Locality Name (eg, city)
+
+localityName_default            = FZ
+
+0.organizationName              = Organization Name (eg, company)
+
+0.organizationName_default      = zdz
+
+organizationalUnitName          = Organizational Unit Name (eg, section)
+
+organizationalUnitName_default  = zdz
+
+创建证书私钥
+
+cd /etc/pki/CA/private
+
+(umask 077;openssl genrsa -out cakey.pem 2048)
+
+生成自签证书
+
+cd /etc/pki/CA/
+
+openssl req -new -x509 -key private/cakey.pem -out cacert.pem -days=3655
+
+3、创建服务器证书
+
+mkdir /usr/local/nginx/ssl
+
+cd /usr/local/nginx/ssl
+
+(umask 077;openssl genrsa -out nginx.key 1024)
+
+openssl req -new -key nginx.key -out nginx.csr
+
+openssl ca -in nginx.csr -out nginx.crt -days=3650
+
+4、创建客户端浏览器证书
+
+(umask 077;openssl genrsa -out client.key 1024)
+
+openssl req -new -key client.key -out client.csr
+
+openssl ca -in client.csr -out client.crt -days=3650
+
+将文本格式的证书转换成可以导入浏览器的证书
+
+openssl pkcs12 -export -clcerts -in client.crt -inkey client.key -out client.p12  
+
+5、配置nginx服务器验证
+
+vim /usr/local/nginx/conf/nginx.conf
+
+ssl on;
+
+ssl_certificate         /usr/local/nginx/ssl/nginx.crt;
+
+ssl_certificate_key     /usr/local/nginx/ssl/nginx.key;
+
+ssl_client_certificate  /usr/local/nginx/ssl/cacert.pem;
+
+ssl_session_timeout     5m;
+
+#ssl_verify_client       on;                         服务器验证客户端，暂时不开启，让没有证书的客户端可以访问，先完成单向验证
+
+ssl_protocols           SSLv2 SSLv3 TLSv1;
+
+6、配置双向验证
+
+nginx配置开启ssl_verify_client       on;    
+
+在客户端浏览器没有安装证书的情况下访问

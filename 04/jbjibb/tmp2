@@ -1,0 +1,29 @@
+sed -i "42d" /etc/pki/tls/openssl.cnf
+sed -i '41a\dir             = /etc/pki/CA/server/          # Where everything is kept' /etc/pki/tls/openssl.cnf
+sed -i "42d" /usr/local/openssl/ssl/openssl.cnf
+sed -i '41a\dir             = /etc/pki/CA/server/           # Where everything is kept' /usr/local/openssl/ssl/openssl.cnf
+cd /etc/pki/CA/
+mkdir server
+cd /etc/pki/CA/server/
+mkdir root server client newcerts private
+echo 01 > serial
+echo 01 > crlnumber
+touch index.txt
+umask 077;openssl genrsa -out /etc/pki/CA/server/private/cakey.pem 4096
+openssl req -new -x509 -key /etc/pki/CA/server/private/cakey.pem -out /etc/pki/CA/server/cacert.pem -days 365 -subj "/C=CN/ST=sici/L=ga/O=Solifd/OU=Solifd.LT/CN=sh.solifd.com"
+openssl req -new -x509 -key /etc/pki/CA/server/private/cakey.pem -out /etc/pki/CA/server/myselfsigned.cer -days 365 -subj "/C=CN/ST=sici/L=ga/O=Solifd/OU=Solifd.LT/CN=sh.solifd.com"
+openssl req -new -out /etc/pki/CA/server/ca-req.csr -key /etc/pki/CA/server/private/cakey.pem -days 365 -subj "/C=CN/ST=sici/L=ga/O=Solifd/OU=Solifd.LT/CN=sh.solifd.com"
+
+openssl x509 -req -in /etc/pki/CA/server/ca-req.csr -out /etc/pki/CA/server/ca-cert.pem -signkey /etc/pki/CA/server/private/cakey.pem -days 365
+
+openssl pkcs12 -export -clcerts -in /etc/pki/CA/server/ca-cert.pem -inkey /etc/pki/CA/server/private/cakey.pem -out /etc/pki/CA/server/ca.p12
+
+umask 077;openssl genrsa -out /etc/pki/CA/server/server/server.key 2048
+openssl req -new -key /etc/pki/CA/server/server/server.key -out /etc/pki/CA/server/server/server.csr -subj "/C=CN/ST=sici/L=ga/O=Solifd/OU=Solifd.LT/CN=solifd.xyz"
+openssl ca -in /etc/pki/CA/server/server/server.csr -out /etc/pki/CA/server/server/server.crt -days 365
+sed -i 's/yes/no/g' index.txt.attr
+yes | cp /etc/pki/CA/server/server/server.key /usr/local/nginx/conf/test
+yes |cp /etc/pki/CA/server/server/server.crt /usr/local/nginx/conf/test
+
+
+#openssl pkcs12 -export -out myselfsigned.pfx -inkey private/cakey.pem -in cacert.pem

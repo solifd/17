@@ -1,0 +1,7 @@
+tar zxvf pcre-8.33.tar.gz
+cd pcre-8.33
+./configure --prefix=/usr/local/pcre
+make && make install
+cd ..
+rm -rf pcre-8.33
+yum -y install openssl openssl-devel

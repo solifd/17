@@ -1,0 +1,20 @@
+if [ -s libunwind.sh ]; then
+echo "libunwind.sh [found]"
+else
+echo "Error: libunwind.sh not found!!!download now......"
+
+curl "https://raw.githubusercontent.com/levelip/sh/master/libunwind.sh" -o libunwind.sh
+fi
+chmod 755 libunwind.sh
+./libunwind.sh
+rm -rf libunwind.sh
+if [ -s gperftools.sh ]; then
+echo "gperftools.sh [found]"
+else
+echo "Error: gperftools.sh not found!!!download now......"
+
+curl "https://raw.githubusercontent.com/levelip/sh/master/gperftools.sh" -o gperftools.sh
+fi
+chmod 755 gperftools.sh
+./gperftools.sh
+##sh install.nginx

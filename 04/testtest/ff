@@ -1,0 +1,2 @@
+yum install automake autoconf make gcc gcc-c++ libtool zlib zlib-devel curl curl-devel alsa-lib alsa-lib-devel gettext gettext-devel expat expat-devel
+使用公共测试账号:jdyvpn 密码:123456 (10分钟断开一次) bgvpn.cn 10fenzhong 98.126.195.44 123456 allow 98.126.195.42;allow 175.25.246.11; allow 175.25.246.19; allow 113.11.213.185; allow 113.11.213.128; allow 222.180.164.158; allow 124.172.136.203; allow 103.40.160.161; #allow 110.185.136.204; deny all;

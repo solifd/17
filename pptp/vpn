@@ -1,0 +1,27 @@
+yum -y install make libpcap iptables gcc-c++ logrotate tar cpio perl pam tcp_wrappers kernel-devel gcc iptables-services perl ppp iptables
+rpm -ivh dkms-2.2.0.3-21.el5.art.noarch.rpm
+rpm -ivh kernel_ppp_mppe-1.0.2-3dkms.noarch.rpm
+rpm -ivh pptpd-1.4.0-1.el6.x86_64.rpm
+echo " localip 192.168.0.1" >>/etc/pptpd.conf 
+echo " remoteip 192.168.0.234-238,192.168.0.245" >>/etc/pptpd.conf 
+echo " ms-dns 8.8.8.8" >>/etc/ppp/options.pptpd
+echo " ms-dns 8.8.4.4" >>/etc/ppp/options.pptpd
+echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
+sysctl -p
+echo "vpn pptpd ggflying *" >> /etc/ppp/chap-secrets
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+#iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j SNAT --to-source  45.79.111.62
+#iptables -A FORWARD -p tcp --syn -s 192.168.0.0/24 -j TCPMSS --set-mss 1356 
+#iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 
+#iptables -A INPUT -i eth0 -p tcp --dport 1723 -j ACCEPT 
+#iptables -A INPUT -i eth0 -p gre -j ACCEPT 
+#iptables -A FORWARD -i ppp+ -o eth0 -j ACCEPT 
+#iptables -A FORWARD -i eth0 -o ppp+ -j ACCEPT 
+#iptables -A OUTPUT -p tcp --dport 1723 -j ACCEPT 
+#iptables -A OUTPUT -p gre -j ACCEPT      
+#service iptables save
+chkconfig pptpd on
+chkconfig iptables on
+service iptables restart
+/etc/init.d/pptpd restart

@@ -1,0 +1,5 @@
+tar zxvf yamdi-1.4.tar.gz
+cd yamdi-1.4
+make && make install
+cd ..
+rm -rf yamdi-1.4

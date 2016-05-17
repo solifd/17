@@ -1,0 +1,88 @@
+Centos布署内网代理服务器
+环境及要求
+内网工作机10台，全为win7系统，网段是192.168.1./24，服务器1台，CentOS6系统(双网卡)。路由器一个（动态IP，通过PPPOP帐户密码上网），48口交换机一个。要求部署CentOS服务器，使其成为代理服务器，内网工作机必须通过服务器链接网络。
+分析：成为代理服务器，即CentOS服务器一块网卡成为所有工作组的网关并，另外一块网卡连接外网，然后转发即可。由于是PPPOP拨号上网，还需配置CentOS拨号上网设置。
+部署CENTOS6拨号上网
+首先是安装拨号程序：
+yum -y install rp-pppoe*
+然后设置拨号上网：
+/usr/sbin/pppop-setup
+Welcome to the PPPoE client setup.  First, I will run some checks on 
+your system to make sure the PPPoE client is installed properly…
+LOGIN NAME
+Enter your Login Name (default root):    #PPPOP的用户名
+INTERFACE
+Enter the Ethernet interface connected to the PPPoE modem 
+For Solaris, this is likely to be something like /dev/hme0. 
+For Linux, it will be ethX, where ‘X’ is a number. 
+(default eth0):       #使用哪块网卡
+Do you want the link to come up on demand, or stay up continuously? 
+If you want it to come up on demand, enter the idle time in seconds 
+after which the link should be dropped.  If you want the link to 
+stay up permanently, enter ‘no’ (two letters, lower-case.) 
+NOTE: Demand-activated links do not interact well with dynamic IP 
+addresses.  You may have some problems with demand-activated links. 
+Enter the demand value (default no):      #直接回车
+DNS
+Please enter the IP address of your ISP’s primary DNS server. 
+If your ISP claims that ‘the server will provide dynamic DNS addresses’, 
+enter ’server’ (all lower-case) here. 
+If you just press enter, I will assume you know what you are 
+doing and not modify your DNS setup. 
+Enter the DNS information here:         #输入DNS
+PASSWORD
+Please enter your Password:           #输入ADSL密码 
+Please re-enter your Password:       #再次输入密码
+USERCTRL
+Please enter ‘yes’ (three letters, lower-case.) if you want to allow 
+normal user to start or stop DSL connection (default yes):        #是否允许普通用户启动连接
+FIREWALLING
+Please choose the firewall rules to use.  Note that these rules are 
+very basic.  You are strongly encouraged to use a more sophisticated 
+firewall setup; however, these will provide basic security.  If you 
+are running any servers on your machine, you must choose ‘NONE’ and 
+set up firewalling yourself.  Otherwise, the firewall rules will deny 
+access to all standard servers like Web, e-mail, ftp, etc.  If you 
+are using SSH, the rules will block outgoing SSH connections which 
+allocate a privileged source port.
+The firewall choices are: 
+0 – NONE: This script will not set any firewall rules.  You are responsible 
+          for ensuring the security of your machine.  You are STRONGLY 
+          recommended to use some kind of firewall rules. 
+1 – STANDALONE: Appropriate for a basic stand-alone web-surfing workstation 
+2 – MASQUERADE: Appropriate for a machine acting as an Internet gateway 
+                for a LAN 
+Choose a type of firewall (0-2):        #防火墙选择，选择0
+Start this connection at boot time
+Do you want to start this connection at boot time? 
+Please enter no or yes (default no):          #是否自启动
+** Summary of what you entered **
+Ethernet Interface: eth0 
+User name:          root 
+Activate-on-demand: No 
+DNS:                Do not adjust 
+Firewalling:        NONE 
+User Control:       yes 
+Accept these settings and adjust configuration files (y/n)?       #是否将配置写入配置文件，输入y
+之后就可以启动ADSL进行拨号上网了：
+/usr/sbin/pppoe-start
+如果没有连接上，请检查下配置文件是否正确，网线是否插好等。将其加入到开机启动项：
+chkconfig pppoe-server on
+设置CENTOS服务器内网转发
+部署另外一块网卡IP配置信息，假定ADSL使用了eth0网卡，ip为202.102.123.32，内网使用eth1网卡，IP为192.168.1.1（/etc/sysconfig/network-scripts/ifcfg-eth1设置为静态）.
+开启IP转发
+echo 1 >/proc/sys/net/ipv4/ip_forward
+配置iptables规则
+iptables -t nat -A POSTROUTING -j MASQUERADE
+iptables -t nat -A POSTROUTING –s 192.168.1.0/24 -j MASQUERADE
+配置静态路由规则
+route add -net 202.102.123.32 netmask 255.255.255.0
+route add -net 192.168.1.1 netmask 255.255.255.0
+route add default gw 202.102.123.32
+设置开机自动启动
+vim /etc/rc.local
+/sbin/iptables -t nat -A POSTROUTING –s 192.168.1.0/24 -j MASQUERADE
+echo 1 >/proc/sys/net/ipv4/ip_forward
+设置工作机上网
+将工作机的网关设置为192.168.1.1即可通过CentOS服务器上网了。
+

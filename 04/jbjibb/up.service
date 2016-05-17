@@ -1,0 +1,17 @@
+cd /etc/pki/CA/
+rm -rf * 
+mkdir root server client newcerts private
+echo 01 > serial
+echo 01 > crlnumber
+touch index.txt
+umask 077;openssl genrsa -out /etc/pki/CA/private/cakey.pem 2048
+openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/cacert.pem -days 7 -subj "/C=CN/ST=sici/L=ga/O=Your infopany Name/OU=sh.solifd.info/CN=upload.solifd.com"
+
+openssl req -new -out /etc/pki/CA/ca-req.csr -key /etc/pki/CA/private/cakey.pem -days 7 -subj "/C=CN/ST=sici/L=ga/O=Your infopany Name/OU=sh.solifd.info/CN=upload.solifd.com"
+
+yes | openssl x509 -req -in /etc/pki/CA/ca-req.csr -out /etc/pki/CA/ca-cert.pem -signkey /etc/pki/CA/private/cakey.pem -days 7
+
+
+umask 077;openssl genrsa -out /etc/pki/CA/server/nginx.key 2048
+openssl req -new -key /etc/pki/CA/server/nginx.key -out /etc/pki/CA/server/nginx.csr -subj "/C=CN/ST=sici/L=ga/O=Your infopany Name/OU=sh.solifd.info/CN=upload.solifd.com"
+yes | openssl ca -in /etc/pki/CA/server/nginx.csr -out /etc/pki/CA/server/nginx.crt -days 5

@@ -1,0 +1,88 @@
+https://transfer.sh/XvIbf/openvpn.tar.gz
+# 轻云免流配置
+# 本文件由系统自动生成
+setenv IV_GUI_VER "de.blinkt.openvpn 0.6.17" 
+machine-readable-output
+client
+dev tun
+connect-retry-max 5
+connect-retry 5
+resolv-retry 60
+########免流代码########
+http-proxy-option EXT1 "POST http://wap.10010.com" 
+http-proxy-option EXT1 "GET http://wap.10010.com" 
+http-proxy-option EXT1 "X-Online-Host: wap.10010.com" 
+http-proxy-option EXT1 "POST http://wap.10010.com" 
+http-proxy-option EXT1 "X-Online-Host: wap.10010.com" 
+http-proxy-option EXT1 "POST http://wap.10010.com" 
+http-proxy-option EXT1 "Host: wap.10010.com" 
+http-proxy-option EXT1 "GET http://wap.10010.com" 
+http-proxy-option EXT1 "Host: wap.10010.com"
+http-proxy 106.2.74.156 80
+########免流代码########
+
+remote 106.2.74.156 3389 tcp-client
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+
+<ca>
+-----BEGIN CERTIFICATE-----
+MIIEyjCCA7KgAwIBAgIJANDnMpGfOAwIMA0GCSqGSIb3DQEBCwUAMIGeMQswCQYD
+VQQGEwJDTjESMBAGA1UECBMJR3VhbmdEb25nMRIwEAYDVQQHEwlHdWFuZ1pob3Ux
+ETAPBgNVBAoTCDkxTm9ybWFsMQwwCgYDVQQLEwNWUE4xFDASBgNVBAMTCzkxTm9y
+bWFsIENBMRAwDgYDVQQpEwdPcGVuVlBOMR4wHAYJKoZIhvcNAQkBFg9BZG1pbkBx
+eXBjcy5jb20wHhcNMTYwNTAyMDc1NTM4WhcNMjYwNDMwMDc1NTM4WjCBnjELMAkG
+A1UEBhMCQ04xEjAQBgNVBAgTCUd1YW5nRG9uZzESMBAGA1UEBxMJR3VhbmdaaG91
+MREwDwYDVQQKEwg5MU5vcm1hbDEMMAoGA1UECxMDVlBOMRQwEgYDVQQDEws5MU5v
+cm1hbCBDQTEQMA4GA1UEKRMHT3BlblZQTjEeMBwGCSqGSIb3DQEJARYPQWRtaW5A
+cXlwY3MuY29tMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvDrxdiCj
+SPbil6RCrn49FPz4kKlSRSKKFvjdlfNV7Bo+ULNrDTloB68jbyKLFnC0TCHlIV1v
+y8+VQhQZIAAQ9HApK0n4ssI1geVJKV7S4VJAkrfxtqX9VBHyBhvqFZ7k06b1d8PM
+zNVww/loVUdMJm1dAQ+u/od7Y2CiVkqJzAPzTapdpZ9fVcVTyWAoU/uiA5xXM3Ke
+6+uCQjOOJvcXKgO+s0g1oVbwR6Tadq+JrYRzb/Yuda5U7lg2MO3t1r+o+GH/p/ht
+9Ni5cvi8lV1zqafxOqEVcQ0kXrAMlW6DrlKIrTwGa0F1rVLeCthoxztqZAnxjlDg
+VaDMtKwMlN5BZwIDAQABo4IBBzCCAQMwHQYDVR0OBBYEFMu6RaOljnO07fuuWVUp
+OJ6um1SXMIHTBgNVHSMEgcswgciAFMu6RaOljnO07fuuWVUpOJ6um1SXoYGkpIGh
+MIGeMQswCQYDVQQGEwJDTjESMBAGA1UECBMJR3VhbmdEb25nMRIwEAYDVQQHEwlH
+dWFuZ1pob3UxETAPBgNVBAoTCDkxTm9ybWFsMQwwCgYDVQQLEwNWUE4xFDASBgNV
+BAMTCzkxTm9ybWFsIENBMRAwDgYDVQQpEwdPcGVuVlBOMR4wHAYJKoZIhvcNAQkB
+Fg9BZG1pbkBxeXBjcy5jb22CCQDQ5zKRnzgMCDAMBgNVHRMEBTADAQH/MA0GCSqG
+SIb3DQEBCwUAA4IBAQCE1WPkNm9Ny8KWceclW7J8A4ea82WqyLNszl3Ybk4p4fYx
+n7pFs57ujcynBs6eFXVQNjxt2ERhFVnD3sk/C8q5tMPnFemIicdeiWAY8jq/yYy4
+FjQP3RAPkNDLHolwJeeivQ1MsCRu4Ry7SAaIdMPiGmRTvYvw7LJTcso/wHVASd67
+8QIGPaX0oBYRRiXDLn+BDftXKvztM+uNCa22a31SleIrl6BrvfYEeHsUMiPuaRmI
+9UlO0sjawOkdPOeZAavUFL7j8V2jONuXBFUh9otlIfn0/PiaIsbPcUFFVbKoCnuS
+W8CsYPGBnNcJ6rmB7c5DTgw1FY5B0DAl6XuvXkiL
+-----END CERTIFICATE-----
+</ca>
+key-direction 1
+<tls-auth>
+#
+# 2048 bit OpenVPN static key
+#
+-----BEGIN OpenVPN Static key V1-----
+9d065db8a49f31cc3445a175c507a6e6
+5ab895086203179b9bf92f7812839fc5
+80d4fa2272ce7bed3ab04b447327c329
+ef4847d0f902dc39e078616165d11e8b
+1ca205b9049a44378556026063205c8a
+b203722d0bac2af1569679fd89d888cb
+ac15c625f39db817e533787aac015bba
+0686360535bd03c28eb79f9cde891b7c
+0b54880052aafbf380fb5e1db6627235
+883a92b92de280299916fc15d3e25d22
+523f77c3281d59989330d44afc81ffaf
+fcffc26c2a1632d87b14c90344214eb2
+600d0cbd457eaa4c2e83504d559d4e0f
+8fa8e0f9e62aa5ed128f58b4268fed6e
+fff093e9afa0fa33f361779a6087aee6
+8d818ca97710686e3f702a293e01889a
+-----END OpenVPN Static key V1-----
+</tls-auth>
+auth-user-pass
+ns-cert-type server
+comp-lzo
+verb 3
+

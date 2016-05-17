@@ -1,0 +1,25 @@
+cd /etc/pki/CA/
+mkdir root server client newcerts private
+echo 01 > serial
+echo 01 > crlnumber
+touch index.txt
+umask 077;openssl genrsa -out /etc/pki/CA/private/cakey.pem 2048
+openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/cacert.pem -days 365 -subj "/C=CN/ST=sici/L=ga/O=Your Company Name/OU=sh.solifd.com/CN=sh.solifd.com"
+openssl req -new -x509 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/myselfsigned.cer -days 365 -subj "/C=CN/ST=sici/L=ga/O=Your Company Name/OU=sh.solifd.com/CN=sh.solifd.com"
+openssl req -new -out /etc/pki/CA/ca-req.csr -key /etc/pki/CA/private/cakey.pem -days 365 -subj "/C=CN/ST=sici/L=ga/O=Your Company Name/OU=sh.solifd.com/CN=sh.solifd.com"
+
+openssl x509 -req -in /etc/pki/CA/ca-req.csr -out /etc/pki/CA/ca-cert.pem -signkey /etc/pki/CA/private/cakey.pem -days 365
+
+openssl pkcs12 -export -clcerts -in /etc/pki/CA/ca-cert.pem -inkey /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/ca.p12
+
+umask 077;openssl genrsa -out /etc/pki/CA/server/nginx.key 1024
+openssl req -new -key /etc/pki/CA/server/nginx.key -out /etc/pki/CA/server/nginx.csr -subj "/C=CN/ST=sici/L=ga/O=Your Company Name/OU=sh.solifd.com/CN=sh.solifd.com"
+openssl ca -in /etc/pki/CA/server/nginx.csr -out /etc/pki/CA/server/nginx.crt -days 3650
+sed -i 's/yes/no/g' index.txt.attr
+umask 077;openssl genrsa -out /etc/pki/CA/client/client.key 1024
+openssl req -new -key /etc/pki/CA/client/client.key -out /etc/pki/CA/client/client.csr -subj "/C=CN/ST=sici/L=ga/O=Your Company Name/OU=sh.solifd.com/CN=sh.solifd.com"
+openssl ca -in /etc/pki/CA/client/client.csr -out /etc/pki/CA/client/client.crt -days 3650
+openssl pkcs12 -export -clcerts -in /etc/pki/CA/client/client.crt -inkey /etc/pki/CA/client/client.key -out /etc/pki/CA/client.p12
+
+
+#openssl pkcs12 -export -out myselfsigned.pfx -inkey private/cakey.pem -in cacert.pem

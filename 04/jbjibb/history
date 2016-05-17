@@ -1,0 +1,315 @@
+ 861  yum install awstats  -y
+  862  yum install awstats*  -y
+  863  cd /usr/local/awstats
+  864  find  / -name awstats
+  865  cd /etc/cron.hourly/awstats
+  866  vi /etc/cron.hourly/awstats
+  867  /usr/share/awstats/tools/awstats_updateall.pl now -configdir="/home/wwwlogs/x.solifd.com.log" -awstatsprog="/usr/share/awstats/wwwroot/cgi-bin/awstats.pl" >/dev/null
+  868  ls
+  869  cd /usr/share/awstats/tools/
+  870  ls
+  871  sh awstats_configure.pl
+  872  ./awstats_configure.pl
+  873  cd /root
+  874  ls
+  875  vi mysql
+  876  chmod +x mysql
+  877  sh mysql test
+  878  cp /etc/profile /etc/profile.old
+  879  vi /etc/profile
+  880  screen r
+  881  screen -r
+  882  screen -S 1
+  883  screen -r
+  884  ls /home/wwwlogs/
+  885  screen -r
+  886  yum install goaccess
+  887  cd home
+  888  cd /home
+  889  ls
+  890  cd wwwlogs
+  891  ls
+  892  wwwlogs 
+  893  goacces -f  x.solifd.com.log
+  894  goaccess  -f  x.solifd.com.log
+  895  goaccess  -f  x.solifd.com.log -s -a -b
+  896  goaccess  -f  x.solifd.com.log -s -a 
+  897  find / -name awstats
+  898  cd /usr/share/awstats
+  899  ls
+  900  cd wwwroot
+  901  ls
+  902  cp -r css icon /home/www/default
+  903  cp -r css /home/www/default
+  904  cp -r icon /home/www/default
+  905  cd /etc/awstats
+  906  ls
+  907  vi awstats.test.solifd.com.conf
+  908  ls
+  909  mkdir /home/www/default/awstats
+  910  free
+  911  /usr/local/awstats/tools/awstats_buildstaticpages.pl -config=awstats.test.solifd.com.conf -update -lang=cn -awstatsprog=/usr/local/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  912  find / -name awstats_buildstaticpages.pl
+  913  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=awstats.test.solifd.com.conf -update -lang=cn -awstatsprog=/usr/local/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  914  find / -name awstats.pl
+  915  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=awstats.test.solifd.com.conf -update -lang=cn -awstatsprog=/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  916  find / -name awstats.test.solifd.com.conf
+  917  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=/etc/awstats/awstats.test.solifd.com.conf -update -lang=cn -awstatsprog=/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  918  vi /etc/awstats/awstats.test.solifd.com.conf
+  919  ls
+  920  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=awstats.test.solifd.com.conf -update -lang=cn -awstatsprog=/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  921  ls
+  922  mv awstats.test.solifd.com.conf com.conf
+  923  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=./com.conf -update -lang=cn -awstatsprog=/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  924  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=test.solifd.com -update -lang=cn -awstatsprog=/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  925  ls
+  926  mv com.conf awstats.test.solifd.com.conf
+  927  /usr/share/awstats/tools/awstats_buildstaticpages.pl -config=test.solifd.com -update -lang=cn -awstatsprog=/usr/share/awstats/wwwroot/cgi-bin/awstats.pl -dir=/home/www/default/awstats
+  928  vi test
+  929  /home/www/default/awstats
+  930  cd /home/www/default/awstats
+  931  ls
+  932  cd ..
+  933  cp -r awstats /home/web/upload
+  934  chown -R www:www /home/web/upload
+  935  cp -r awstats /home/Video
+  936  chown -R www:www /home/Video
+  937  free
+  938  ps ax
+  939  s
+  940  ls
+  941  cd /home
+  942  ls
+  943  cd web
+  944  ls
+  945  cd t3D8BvBdbqpSDAsY7XT6uKetv9W8as6hyPmTEyEKHC3ZwNFP
+  946  cd upload
+  947  ls
+  948  cd /usr/local/nginx/conf/vhost
+  949  ls
+  950  vi video.solifd.webcam.conf
+  951  cat sb.solifd.info.conf
+  952  cat sh.conf.bak
+  953  cat s.solifd.info.conf
+  954  vi solifd.xyz.conf
+  955  ls
+  956  vi xyz.conf
+  957  service nginx restart
+  958  vi xyz.conf
+  959  service nginx restart
+  960  vi xyz.conf
+  961  wq
+  962  service nginx restart
+  963  wq
+  964  vi xyz.conf
+  965  free
+  966  service nginx restart
+  967  vi xyz.conf
+  968  service nginx restart
+  969  find / -name test
+  970  cd /etc/awstats/
+  971  ls
+  972  vi test
+  973  ls
+  974  history
+  975  vi test
+  976  chmod +x test
+  977  sh test
+  978  ls
+  979  vi test
+  980  rm -rf /home/web/upload/awstats/*
+  981  ls/home/wwwlogs
+  982  ls /home
+  983  ls /home/wwwlogs
+  984  vi test
+  985  vi awstats.test.solifd.com.conf
+  986  sh test
+  987  logout
+  988  ls
+  989  cd /etc/awstats/
+  990  ls
+  991  vi awstats.test.solifd.com.conf
+  992  ls /home
+  993  ls /home/wwwlogs
+  994  ls /usr/local/nginx/conf/vhost
+  995  more /usr/local/nginx/conf/vhost/bolg.solifd.com.conf
+  996  ls
+  997  free
+  998  logout
+  999  ls
+ 1000  cd /etc/awstats/
+ 1001  ls
+ 1002  cd /usr/local/nginx/conf/vhost
+ 1003  vi xyz.conf
+ 1004  service nginx restart
+ 1005  cd /etc/awstats/
+ 1006  ls
+ 1007  rm -rf /home/upload/awstats/*
+ 1008  sh test
+ 1009  rm -rf /home/upload/awstats/*
+ 1010  ls
+ 1011  vi awstats.test.solifd.com.conf
+ 1012  ls /home/wwwlogs
+ 1013  vi awstats.test.solifd.com.conf
+ 1014  ls
+ 1015  sh test
+ 1016  more test
+ 1017  ls
+ 1018  more awstats.model.conf 
+ 1019  ls
+ 1020  ls -l
+ 1021  more awstats.test.solifd.com.conf
+ 1022  ls
+ 1023  more test
+ 1024  find / -name awstats
+ 1025  ls /var/lib/awstats
+ 1026  rm -rf /var/lib/awstats/*
+ 1027  ls
+ 1028  sh test
+ 1029  cd /home
+ 1030  wget -c wget http://www.maxmind.com/download/geoip/api/c/GeoIP-*.tar.gz
+ 1031  wget -c wget http://www.maxmind.com/download/geoip/api/c/GeoIP-1.4.8.tar.gz
+ 1032  wget http://www.maxmind.com/download/geoip/api/perl/Geo-IP-1.27.tar.gz
+ 1033  wget http://search.cpan.org/CPAN/authors/id/G/GM/GMPASSOS/Geo-IPfree-0.2.tar.gz
+ 1034  tar zxf GeoIP-1.4.8.tar.gz
+ 1035  cd GeoIP-1.4.8
+ 1036  ./configure --prefix=/usr/local/GeoIP
+ 1037  make && make install
+ 1038  cd ..
+ 1039  echo '/usr/local/GeoIP/lib' >> /etc/ld.so.conf
+ 1040  dconfig /etc/ld.so.conf
+ 1041  ldconfig /etc/ld.so.conf
+ 1042  tar zxf Geo-IP-1.27.tar.gz
+ 1043  cd Geo-IP-1.27
+ 1044  perl Makefile.PL LIBS='-L/usr/local/GeoIP/lib'INC='-I/usr/local/GeoIP/include'
+ 1045  make && make install
+ 1046  perl Makefile.PL LIBS='-L/usr/local/lib' 
+ 1047  make && make install
+ 1048  cd ..
+ 1049  wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz
+ 1050  wget http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz
+ 1051  wget http://geolite.maxmind.com/download/geoip/database/asnum/GeoIPASNum.dat.gz
+ 1052  mkdir /var/GeoIP
+ 1053  mv GeoIP.dat.gz /var/GeoIP/
+ 1054  gunzip /var/GeoIP/GeoIP.dat.gz
+ 1055  mv GeoLiteCity.dat.gz /var/GeoIP/
+ 1056  gunzip /var/GeoIP/GeoLiteCity.dat.gz
+ 1057  mv GeoIPASNum.dat.gz /var/GeoIP/
+ 1058  gunzip /var/GeoIP/GeoIPASNum.dat.gz
+ 1059  cd Geo-IP-1.39
+ 1060  ls
+ 1061  wget http://geolite.maxmind.com/download/geoip/api/perl/Geo-IP-1.39.tar.gz
+ 1062  tar -zxf Geo-IP-1.39.tar.gz
+ 1063  cd Geo-IP-1.39
+ 1064  perl Makefile.PL LIBS='-L/usr/local/lib'
+ 1065  make && make install
+ 1066  find / -name GeoIP.h
+ 1067  ls /var/
+ 1068   perl Makefile.PL LIBS='-L//usr/local/GeoIP'
+ 1069  make && make install
+ 1070   perl Makefile.PL LIBS='-L//usr/local/GeoIP/include'
+ 1071  make && make install
+ 1072  perl Makefile.PL LIBS='-L/usr/local/lib'
+ 1073  make
+ 1074  ldconfig
+ 1075  make
+ 1076  ps ax
+ 1077  cd ..
+ 1078  wget http://zlib.net/zlib-1.2.8.tar.gz
+ 1079  tar xvzf zlib-1.2.8.tar.gz
+ 1080  cd zlib-1.2.8
+ 1081  ./configure ï¿½prefix=/usr/local/zlib
+ 1082  =/usr/local/zlib
+ 1083  ./configure -prefix=/usr/local/zlib
+ 1084  make && make install
+ 1085  cd ..
+ 1086  wget http://www.maxmind.com/download/geoip/api/c/GeoIP-latest.tar.gz
+ 1087  ls
+ 1088  tar xzvf GeoIP-latest.tar.gz
+ 1089  cd GeoIP-1.6.0
+ 1090  ./configure && make && make install
+ 1091  cd ..
+ 1092  ls
+ 1093  wget http://www.maxmind.com/download/geoip/api/c/ Geo-IP-latest.tar.gz
+ 1094  ls
+ 1095  cd Geo-IP-1.39
+ 1096  make
+ 1097  make install
+ 1098  vi  /etc/awstats/awstats.IP/HOSTNAME.conf
+ 1099  find / -name HOSTNAME.conf
+ 1100  cd /etc/awstats/
+ 1101  ls
+ 1102  vi awstats.test.solifd.com.conf
+ 1103  ls /var/GeoIP/
+ 1104  ls /var/lib/awstats
+ 1105  rm -rf /var/lib/awstats/*
+ 1106  rm -rf /home/web/upload/awstats/*
+ 1107  sh test
+ 1108  vi /home/shell/jishi
+ 1109  ls /home
+ 1110  ls wwwroot 
+ 1111  wwwroot 
+ 1112  cd /home
+ 1113  ls
+ 1114  ls  wwwlogs
+ 1115  ls  wwwroot
+ 1116  ls  wwwroot/default
+ 1117  find / -name ico
+ 1118  cp -R /usr/local/awstats/wwwroot/icon /home/web/upload
+ 1119  find / -name icon
+ 1120  cp -R /home/www/default/icon /home/web/upload
+ 1121  cp -R /home/www/default/css /home/web/upload
+ 1122  find / -name css
+ 1123  cp -R /usr/share/awstats/wwwroot/css  /home/web/upload
+ 1124  cd /home/web/upload
+ 1125  ls
+ 1126  mv css icon awstats
+ 1127  ls
+ 1128  mkdir awstatsicons
+ 1129  cd awstats
+ 1130  ls
+ 1131  mv icon /home/web/upload
+ 1132  cd ..
+ 1133  ls
+ 1134  cd icon 
+ 1135  ls
+ 1136  cd ..
+ 1137  ls
+ 1138  rm -rf awstatsicons
+ 1139  mv icon                                     u
+ 1140  ls
+ 1141  mv u  awstatsicons
+ 1142  ls  awstatsicons
+ 1143  mv  awstatsicons u
+ 1144  mkdir  awstatsicons
+ 1145  ls  awstatsicons
+ 1146  cd u
+ 1147  ls
+ 1148  cd icon
+ 1149  ls
+ 1150  mv * /home/web/upload/awstatsicons
+ 1151  find / -name test
+ 1152  rm -rf /var/lib/awstats/*
+ 1153  rm -rf /home/web/upload/awstats/*
+ 1154  sh /etc/awstats/test
+ 1155  find / -name hr6.png
+ 1156  cd /root
+ 1157  ls
+ 1158  vi awstats
+ 1159  cd /home
+ 1160  ls
+ 1161  wget -c http://file10.smv.to/4OjVtBD4HD/video.mp4
+ 1162  cd Video
+ 1163  wget -c http://209.95.43.62/6dnYoaDlwd/video.mp4
+ 1164  cd ..
+ 1165  cd  Video
+ 1166  cd /root
+ 1167  ls
+ 1168  cd /home/shell
+ 1169  ls
+ 1170  ./dropbox_uploader.sh list
+ 1171  wget -c https://dl-web.dropbox.com/get/ffmpeg/ffmpeg/FFmpeginstall.part000?_subject_uid=64318129&w=AAAjORGN1GLoFcyZRgnNGR106ZJ27oAojo8Bw8rmd0oitw&dl=1
+ 1172  ls
+ 1173  ./dropbox_uploader.sh unlink
+ 1174  ./dropbox_uploader.sh 
+ 1175  ./dropbox_uploader.sh  list

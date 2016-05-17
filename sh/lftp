@@ -1,0 +1,5 @@
+lftp -e "set ssl:verify-certificate no" @203.195.150.104:9421
+lftp -e "set ssl:verify-certificate no" 203.195.150.104:9421 -u 10006287-0-11816466,11816466 << EOF
+mput Wordpress$(date +"%Y%m%d").sql.gz
+bye
+EOF

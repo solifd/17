@@ -1,0 +1,25 @@
+iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport 30065 -j ACCEPT
+iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 30065 -j ACCEPT
+service iptables save 
+git clone https://github.com/shadowsocks/shadowsocks-libev.git
+cd shadowsocks-libev
+./configure
+make && make install
+cd ..
+if [ -f  /usr/local/bin/ss-server ];then
+    /bin/cp /root/oneinstack/init.d/Shadowsocks-libev-init /etc/init.d/shadowsocks
+    chmod +x /etc/init.d/shadowsocks
+    chkconfig --add shadowsocks; chkconfig shadowsocks on;
+ 
+ mkdir /etc/shadowsocks
+ cat > /etc/shadowsocks/config.json<<EOF
+{
+    "server":"45.32.45.18",
+    "server_port":30065,
+    "local_address":"127.0.0.1",
+    "local_port":1080,
+    "password":"test",
+    "timeout":300,
+    "method":"aes-256-cfb",
+}
+EOF

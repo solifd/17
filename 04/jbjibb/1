@@ -1,0 +1,495 @@
+ cat ssl_certificate.crt IntermediateCA.crt >> your_domain_name.crt
+ 
+ Tomcat6配置使用SSL双向认证使用openssl生成证书   
+
+
+    双向认证客户端向服务器发送消息首先把消息用客户端证书加密然后连同时把客户端证书
+
+
+一起发送到服务器端服务器接到消息后用首先用客户端证书把消息解密然后用服务器私钥
+
+
+把消息加密把服务器证书和消息一起发送到客户端客户端用发来的服务器证书对消息进行
+
+
+解密然后用服务器的证书对消息加密然后在用客户端的证书对消息在进行一次加密连同
+
+
+加密消息和客户端证书一起发送到服务器端到服务器端首先用客户端传来的证书对消息进行
+
+
+解密确保消息是这个客户发来的然后用服务器端的私钥对消息在进行解密这个便得到了明
+
+
+文数据。 =====
+
+
+===================== 
+
+
+  openssl
+
+
+在windows上的安装 
+
+
+  从此处下载
+
+
+openssl for windows http://gnuwin32.sourceforge.net/packages/openssl.htm 解压并设置PATH环境变量指向其bin文件夹 下载openssl的配置文件http://www.securityfocus.com/data/tools/openssl.conf 并将其拷到一个文件夹下以便用命令行指定这里是c:/ssl/下 否则运行时会报Unable to load config info from /usr/local/ssl/openssl.cnf错误 ============================= 
+
+
+  以下安装配
+
+
+置环境为linuxtomcat-5.5.30      
+
+
+一、建立目录 
+
+
+cd /home 
+
+
+mkdir ssl 
+
+
+cd ssl 
+
+
+mkdir ca 
+
+
+mkdir client 
+
+
+mkdir server 
+
+
+  
+
+
+创建一个证书的步骤  
+
+
+1生成系统私钥 
+
+
+2生成待签名证书 
+
+
+3生成x509证书, 用CA私钥进行签名 
+
+
+4导成浏览器支持的p12格式证书 
+
+
+  
+
+
+二生成CA证书 
+
+
+目前不使用第三方权威机构的CA来认证自己充当CA的角色。  
+
+
+1. 创建私钥  
+
+
+openssl genrsa -out ca/ca-key.pem 1024  
+
+
+2.创建证书请求  
+
+
+openssl req -new -out ca/ca-req.csr -key ca/ca-key.pem 
+
+
+----- 
+
+
+Country Name (2 letter code) [AU]:cn 
+
+
+State or Province Name (full name) [Some-State]:bj 
+
+
+Locality Name (eg, city) []:bj 
+
+
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:tb 
+
+
+Organizational Unit Name (eg, section) []:tb 
+
+
+Common Name (eg, YOUR name) []:ca Email Address []:ca@ca.com 
+
+
+  
+
+
+Please enter the following 'extra' attributes 
+
+
+to be sent with your certificate request 
+
+
+A challenge password []: 
+
+
+An optional company name []: 
+
+
+3.自签署证书  
+
+
+openssl x509 -req -in ca/ca-req.csr -out ca/ca-cert.pem -signkey ca/ca-key.pem -days 3650  
+
+
+4.将证书导出成浏览器支持的.p12格式  
+
+
+openssl pkcs12 -export -clcerts -in ca/ca-cert.pem -inkey ca/ca-key.pem -out ca/ca.p12  
+
+
+密码123456 
+
+
+       
+
+
+三.生成server证书 
+
+
+1.创建私钥  
+
+
+openssl genrsa -out server/server-key.pem 1024  
+
+
+2.创建证书请求  
+
+
+openssl req -new -out server/server-req.csr -key server/server-key.pem 
+
+
+----- 
+
+
+Country Name (2 letter code) [AU]:cn 
+
+
+State or Province Name (full name) [Some-State]:bj 
+
+
+Locality Name (eg, city) []:bj 
+
+
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:tb 
+
+
+Organizational Unit Name (eg, section) []:tb 
+
+
+Common Name (eg, YOUR name) []:localhost   #此处一定要写服务器所在ip 
+
+
+Email Address []:server@server.com 
+
+
+  
+
+
+Please enter the following 'extra' attributes 
+
+
+to be sent with your certificate request 
+
+
+A challenge password []: 
+
+
+An optional company name []: 
+
+
+3.自签署证书  
+
+
+openssl x509 -req -in server/server-req.csr -out server/server-cert.pem -signkey server/server-key.pem -CA 
+
+
+ca/ca-cert.pem -CAkey ca/ca-key.pem -CAcreateserial -days 3650  
+
+
+4.将证书导出成浏览器支持的.p12格式  
+
+
+openssl pkcs12 -export -clcerts -in server/server-cert.pem -inkey server/server-key.pem -out server/server.p12  密码123456 
+
+
+ 
+
+
+四.生成client证书  
+
+
+1.创建私钥  
+
+
+openssl genrsa -out client/client-key.pem 1024  
+
+
+2.创建证书请求  
+
+
+openssl req -new -out client/client-req.csr -key client/client-key.pem 
+
+
+----- 
+
+
+Country Name (2 letter code) [AU]:cn 
+
+
+State or Province Name (full name) [Some-State]:bj 
+
+
+Locality Name (eg, city) []:bj 
+
+
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:tb 
+
+
+Organizational Unit Name (eg, section) []:tb 
+
+
+Common Name (eg, YOUR name) []:dong 
+
+
+Email Address []:dong@dong.com 
+
+
+  
+
+
+Please enter the following 'extra' attributes 
+
+
+to be sent with your certificate request 
+
+
+A challenge password []: 
+
+
+An optional company name []: 
+
+
+3.自签署证书  
+
+
+openssl x509 -req -in client/client-req.csr -out client/client-cert.pem -signkey client/client-key.pem -CA 
+
+
+ca/ca-cert.pem -CAkey ca/ca-key.pem -CAcreateserial -days 3650  
+
+
+4.将证书导出成浏览器支持的.p12格式  
+
+
+openssl pkcs12 -export -clcerts -in client/client-cert.pem -inkey client/client-key.pem -out client/client.p12  
+
+
+密码123456 
+
+
+  
+
+
+五.根据ca证书生成jks文件 (java keystore) 
+
+
+keytool -keystore truststore.jks -keypass 222222 -storepass 222222 -alias ca -import -trustcacerts -file 
+
+
+ca/ca-cert.pem 
+
+
+  
+
+
+六.配置tomcat ssl 
+
+
+修改conf/server.xml。tomcat6中多了SSLEnabled="true"属性。keystorefile, truststorefile设置为你正确的相关路
+
+
+径  
+
+
+xml 代码  tomcat 5.5的配置 
+
+
+<Connector port="8443" maxHttpHeaderSize="8192" 
+
+
+             maxThreads="150" minSpareThreads="25" maxSpareThreads="75" 
+
+
+             enableLookups="false" disableUploadTimeout="true" 
+
+
+             acceptCount="100" scheme="https" secure="true" 
+
+
+             clientAuth="true" sslProtocol="TLS"  
+
+
+             keystoreFile="server.p12" keystorePass="changeit" keystoreType="PKCS12"  
+
+
+             truststoreFile="truststore.jks" truststorePass="222222" truststoreType="JKS" />   
+
+
+tomcat6.0的配置 
+
+
+<Connector port="8443" protocol="HTTP/1.1" SSLEnabled="true" 
+
+
+               maxThreads="150" scheme="https" secure="true" 
+
+
+               clientAuth="true" sslProtocol="TLS" 
+
+
+               keystoreFile="server.p12" keystorePass="changeit" keystoreType="PKCS12"  
+
+
+               truststoreFile="truststore.jks" truststorePass="222222" truststoreType="JKS"/> 
+
+
+  
+
+
+七、测试linux下 
+
+
+openssl s_client -connect localhost:8443 -cert /home/ssl/client/client-cert.pem -key 
+
+
+/home/ssl/client/client-key.pem -tls1 -CAfile /home/ssl/ca/ca-cert.pem -state -showcerts 
+
+
+GET /index.jsp HTTP/1.0 
+
+
+  
+
+
+八、导入证书 
+
+
+服务端导入server.P12 和ca.p12证书 
+
+
+客户端导入将ca.p12client.p12证书 
+
+
+IE中打开IE->;Internet选项->内容->证书 
+
+
+ca.p12导入至受信任的根证书颁发机构client.p12导入至个人 
+
+
+Firefox中工具-选项-高级-加密-查看证书-您的证书 
+
+
+将ca.p12和client.p12均导入这里 
+
+
+  
+
+
+注意:ca,server,client的证书的common name(ca=ca,server=localhost,client=dong)一定不能重复否则ssl
+
+
+不成功 
+
+
+  九、tomcat应用程序使用浏览器证书认证 
+
+
+在server/webapps/manager/WEB-INF/web.xml中将BASIC认证改为证书认证 
+
+
+<login-config> 
+
+
+    <auth-method>CLIENT-CERT</auth-method> 
+
+
+    <realm-name>Tomcat Manager Application</realm-name> 
+
+
+  </login-config> 
+
+
+  
+
+
+在conf/tomcat-users.xml中填入下列内容 
+
+
+<?xml version='1.0' encoding='utf-8'?> 
+
+
+<tomcat-users> 
+
+
+  <role rolename="manager"/> 
+
+
+  <role rolename="admin"/> 
+
+
+  <role rolename="user"/> 
+
+
+  <user username="EMAILADDRESS=dong@dong.com, CN=dong, OU=tb, O=tb, L=bj, ST=bj, C=cn" 
+
+
+password="null" roles="admin,user,manager"/> 
+
+
+</tomcat-users> 
+
+
+  
+
+
+访问http://localhost:8443即可验证ssl是否成功 
+
+
+访问http://localhost:8443/manager/html可验证应用程序利用client证书验证是否成功  
+
+
+  生成.crt格式证书 
+
+
+openssl x509 -req -days 365 -in ca/ca-req.csr -signkey ca/ca-key.pem -out ca/ca.crt  
+
+
+    
+
+
+  
+
+
+  
+
+
+  
+
+
+   

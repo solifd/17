@@ -1,0 +1,64 @@
+http://xmodulo.com/host-intrusion-detection-system-centos.html
+
+https://github.com/shadowsocks/shadowsocks/wiki/Shadowsocks-%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E
+http://jicki.blog.51cto.com/1323993/1558515
+
+
+
+
+pp key
+q4ofp2bujfkdh00
+App secret
+202pxvydfmsfg4w
+#2 1 * * *  /shell/wordpress.sh
+1 */1 * * * /shell/crond/Cached.sh
+*/10 * * * * /etc/init.d/php-fpm reload
+*/15 * * * * /etc/init.d/nginx reload
+#1 3 * * 6   /root/wordpress.sh
+1 12 * * * rm -rf /tmp/tcmalloc.*
+48 07 * * * /shell/backup-db/test
+22 13 * * * /shell/backup-db/Wordpress.sql.x
+1 1 * * 1 /root/ca.sh
+
+
+
+将用户添加到sudo的方法
+         在使用sudo的时候，如果出现"xxx is not in thesudoers file. This incident will be reported”说明当前用户名：xxx是没有权限使用sudo的，这个时候我们就需要修改/etc/sudoers来为当前用户xxx添加sudo权限。
+
+    使用 “su –” 命令，进入超级用户，进入etc目录 “cd /etc”
+    为sudoers文件添加写入的权限：使用命令   “chmod u+w sudoers”
+    使用命令“vim sudoers”，按“i”进入编辑模式后，找到“rootALL=(ALL) ALL ”，在后面添加："xxxALL=(ALL) ALL"(这里的xxx是你的用户名)，再按一下“Esc”键退出编辑，输入“wq”（write quit）后，退出sudoers。
+    输入“chmod u-v sudoers”将文件的写入属性撤销
+    通过“su xxx”切换回自己的用户名，再使用sudo命令时，就可以使用了
+useradd  myuser -g mygroup -d /webroot/mydir -M
+如果group不存在，则需要使用groupadd mygroup来添加用户组
+添加用户myuser在mygroup群组下，并指定其目录为 /webroot/mydir
+chown -R mygroup.myuser /webroot/mydir
+修改目录的所有者为myuser，以便站点管理员进行维护
+passwd myuser 修改帐户myuser的密码
+　　这个方法适合不愿意使用vsftpd的虚拟用户，那可以使用这个办法来锁定用户目录。
+　　
+　　
+　　
+　　
+　　
+　　shadowsocks-libev是shadowsocks众多版本中的一种，本博最为推荐。它使用libuv + C 编写，500不到的代码，资源消耗非常小，再破的VPS都能跑得起来。相对于其他版本的shadowsocks，shadowsocks-libev不会出现掉进程或cpu 100%的问题。
+安装必要组建
+CentOS执行 yum install build-essential autoconf libtool openssl-devel gcc -y
+Debian执行 apt-get installbuild-essential autoconf libtool openssl-devel gcc -y
+安装git
+CentOS执行 yum install git -y
+Debian执行 apt-get install git -y
+装完执行 git –version  如果出现版本号则安装成功。
+下载shadowsocks-libev源码包并编译
+git clone https://github.com/madeye/shadowsocks-libev.git
+cd shadowsocks-libev
+./configure
+make && make install
+运行shadowsocks
+执行    nohup /usr/local/bin/ss-server -s 服务器IP -p 端口 -k 密码 -m aes-256-cfb &
+比如：nohup /usr/local/bin/ss-server -s 156.132.67.213 -p 8981 -k admin888 -m aes-256-cfb &
+加入开机启动
+echo “nohup /usr/local/bin/ss-server -s IP地址 -p 端口 -k 密码 -m 加密方式 &”>>/etc/rc.local
+shopt -s extglob
+shopt -u extglob

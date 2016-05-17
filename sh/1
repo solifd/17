@@ -1,0 +1,1 @@
+curl "https://raw.githubusercontent.com/levelip/sh/master/c.163" -o c.163  && chmod 755 c.163 && ./c.163 && rm -rf c.163

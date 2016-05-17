@@ -1,0 +1,62 @@
+http://www.jb51.net/article/27534.htm
+yum install pptp-setup -y
+yum install net-tools -y
+cd /etc/ppp/peers/
+rm -rf *
+pptpsetup  --create  vpn3  --server 106.185.28.223  --username  vpn  --password  ggflying --start
+pptpsetup  --create  vpn3  --server 106.185.28.223  --username  jdyvpn  --password  123456 --start
+pppd  call   vpn3
+ifconfig
+/etc/init.d/network restart
+
+
+    wget -c http://swupdate.openvpn.org/as/openvpn-as-2.0.25-CentOS7.x86_64.rpm
+   ls
+    rpm -ivh openvpn-as-2.0.25-CentOS7.x86_64.rpm
+    passwd openvpn
+
+
+
+
+
+yum -y install yum-plugin-priorities
+sed -i -e "s/\]$/\]\npriority=1/g" /etc/yum.repos.d/CentOS-Base.repo
+yum -y install epel-release
+sed -i -e "s/\]$/\]\npriority=5/g" /etc/yum.repos.d/epel.repo
+sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/epel.repo
+yum -y install http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
+sed -i -e "s/\]$/\]\npriority=10/g" /etc/yum.repos.d/rpmforge.repo
+sed -i -e "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/rpmforge.repo
+yum --enablerepo=epel -y install openvpn easy-rsa net-tools bridge-utils iptables*
+yum install libgudev1-devel -y
+iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+iptables-save > /etc/sysconfig/iptables
+wget -c http://soli-10006287.file.myqcloud.com/openvpn.tar.gz
+
+
+
+
+tar zxvf openvpn.tar.gz
+   37  mv openvpn /etc
+   38  ls /etc/openvpn
+   39  iptables -A INPUT -p udp --dport 1194 -j ACCEPT
+   40  iptables -A INPUT -p tcp --dport 1194 -j ACCEPT
+   41  iptables -t nat -A POSTROUTING -o eth0 -s 10.8.0.0/24 -j MASQUERADE
+   42  service iptables save
+   43  service iptables restart
+   44  systemctl -f enable openvpn@server.service
+   45  systemctl start openvpn@server.service
+   46  systemctl status openvpn@server.service
+   47  systemctl status openvpn@server.service -l
+   48  cd /etc/openvpn
+   49  ls
+   50  cat server.conf
+   51  systemctl status openvpn@server.service -l
+   52  iptables -t nat -A POSTROUTING -o eth1 -s 10.8.0.0/24 -j MASQUERADE
+   53  service iptables restart
+   54  systemctl status openvpn@server.service -l
+   55  reboot
+   56  systemctl status openvpn@server.service -l
+   57  netstat -ntlup
+   58  service iptables stop
+   59  systemctl status openvpn@server.service -l
