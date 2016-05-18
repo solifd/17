@@ -16,42 +16,41 @@ cp /usr/share/easy-rsa/2.0/keys/{ca.crt,server.{crt,key},dh2048.pem,ta.key} /etc
 vim /etc/openvpn/server.conf
 port 1194
 
-# 改成 TCP，默认使用 UDP，如果使用 HTTP Proxy，必须使用 TCP 协议
+ 
 proto tcp
 dev tun
 
-# 路径前面加 keys，全路径为/etc/openvpn/keys/ca.crt
+ 
 ca keys/ca.crt
 cert keys/server.crt
-key keys/server.key # 该文件应保密
+key keys/server.key 
 dh keys/dh2048.pem
 
-# 默认虚拟局域网网段，不要和实际的局域网冲突即可
+ 
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 
-# 10.0.0.0/8 是本示例服务器所在的内网网段，你应该根据自身实际情况进行修改
+ 
 push "route 10.0.0.0 255.0.0.0"
 
-# 可以让客户端之间相互访问直接通过openvpn程序转发，根据需要设置
+ 
 client-to-client
 
-# 如果客户端都使用相同的证书和密钥连接 VPN，一定要打开这个选项，否则每个证书只允许一个人连接VPN，但对于生产使用环境而言，每个客户端都应该拥有自己的证书和私钥。
-duplicate-cn
+ 
 
 keepalive 10 120
-tls-auth keys/ta.key 0 # 该文件应保密
+tls-auth keys/ta.key 0  
 comp-lzo
 persist-key
 persist-tun
 
-# OpenVPN的状态日志，默认为/etc/openvpn/openvpn-status.log
+ 
 status openvpn-status.log
 
-# OpenVPN的运行日志，默认为/etc/openvpn/openvpn.log 
+ 
 log-append openvpn.log
 
-# 改成verb 5可以多查看一些调试信息
+ 
 verb 5
 iptables -I INPUT -p tcp --dport 1194 -m comment --comment "openvpn" -j ACCEPT
 iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -j MASQUERADE
