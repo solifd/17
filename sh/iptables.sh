@@ -69,6 +69,9 @@ iptables -A OUTPUT -o eth0 -p tcp --dport 80 --syn -m state --state NEW -j ACCEP
 iptables -A OUTPUT -o eth0 -p tcp --dport 21 --syn -m state --state NEW -j ACCEPT
 iptables -A OUTPUT -o eth0 -p udp --dport 53 -m state --state NEW -j ACCEPT
 
+iptables -I INPUT 4 -p udp -m state --state NEW -m udp --dport 8123:65535 -j ACCEPT
+iptables -I INPUT 4 -p tcp -m state --state NEW -m tcp --dport 8123:65535 -j ACCEPT
+service iptables save 
 #iptables save
 service iptables save
 service iptables restart
