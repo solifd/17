@@ -1,9 +1,0 @@
-if [ -s ss-server.start ]; then
-echo "ss-server.start [found]"
-else
-echo "Error: ss-server.start not found!!!download now......"
-curl "https://raw.githubusercontent.com/levelip/sh/master/ss-server.start" -o ss-server.start
-fi
-chmod 755 ss-server
-sh ss-server.start
-rm -rf ss-server.start

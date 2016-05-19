@@ -1,1 +1,0 @@
-tar czf - owncloud | ssh root@198.74.110.201 tar xzf - -C /home/

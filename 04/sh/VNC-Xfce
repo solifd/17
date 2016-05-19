@@ -1,1 +1,0 @@
-curl "https://raw.githubusercontent.com/levelip/sh/master/VNC-Xfce.sh" -o VNC-Xfce.sh
