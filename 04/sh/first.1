@@ -1,3 +1,4 @@
+
 yum -y install yum-plugin-priorities
 sed -i -e "s/\]$/\]\npriority=1/g" /etc/yum.repos.d/CentOS-Base.repo
 yum -y install epel-release
@@ -6,6 +7,11 @@ sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/epel.repo
 yum -y install http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el7.rf.x86_64.rpm
 sed -i -e "s/\]$/\]\npriority=10/g" /etc/yum.repos.d/rpmforge.repo
 sed -i -e "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/rpmforge.repo
+
+systemctl stop firewalld.service #停止firewall
+systemctl disable firewalld.service #禁止firewall开机启动
+yum install iptables* -y
+
 echo "01 00 * * * root init 6" >> /etc/crontab
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.old
 rm -rf /etc/ssh/sshd_config
