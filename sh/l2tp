@@ -1,1 +1,9 @@
-yum --enablerepo=epel -y install strongswan
+yum --enablerepo=epel -y install strongswan xl2tpd ppp
+yum --enablerepo=epel  -y install make libpcap iptables gcc-c++ logrotate tar cpio perl pam tcp_wrappers kernel-devel gcc iptables-services perl ppp iptables
+
+
+
+rm -rf /etc/strongswan/ipsec.conf
+rm -rf /etc/strongswan/ipsec.secrets
+curl "https://raw.githubusercontent.com/levelip/v1/master/v1/l2/ipsec.conf" -o /etc/strongswan/ipsec.conf
+curl "https://raw.githubusercontent.com/levelip/v1/master/v1/l2/ipsec.secrets" -o /etc/strongswan/ipsec.secrets
