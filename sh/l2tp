@@ -1,4 +1,4 @@
-yum --enablerepo=epel -y install strongswan xl2tpd ppp
+yum --enablerepo=epel -y install strongswan xl2tpd ppp pptpd
 yum --enablerepo=epel  -y install make libpcap iptables gcc-c++ logrotate tar cpio perl pam tcp_wrappers kernel-devel gcc iptables-services perl ppp iptables
 
 
