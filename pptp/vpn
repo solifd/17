@@ -1,4 +1,4 @@
-yum -y install make libpcap iptables gcc-c++ logrotate tar cpio perl pam tcp_wrappers kernel-devel gcc iptables-services perl ppp iptables
+ yum --enablerepo=epel -y install  make libpcap iptables gcc-c++ logrotate tar cpio perl pam tcp_wrappers kernel-devel gcc iptables-services perl ppp iptables
 rpm -ivh dkms-2.2.0.3-21.el5.art.noarch.rpm
 rpm -ivh kernel_ppp_mppe-1.0.2-3dkms.noarch.rpm
 rpm -ivh pptpd-1.4.0-1.el6.x86_64.rpm
