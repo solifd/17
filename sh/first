@@ -9,7 +9,8 @@ sed -i -e "s/enabled = 1/enabled = 0/g" /etc/yum.repos.d/rpmforge.repo
 
 systemctl stop firewalld.service 
 systemctl disable firewalld.service 
-yum install iptables* -y
+yum install iptables*   git*   -y
+
 
 echo "01 00 * * * root init 6" >> /etc/crontab
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.old
