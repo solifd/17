@@ -11,7 +11,7 @@ systemctl stop firewalld.service
 systemctl disable firewalld.service 
 yum install iptables*   git*   -y
 
-
+git clone https://github.com/levelip/17.git
 echo "01 00 * * * root init 6" >> /etc/crontab
 cp /etc/ssh/sshd_config /etc/ssh/sshd_config.old
 rm -rf /etc/ssh/sshd_config
