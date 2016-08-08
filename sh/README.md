@@ -18,6 +18,7 @@ sh
 ==
      curl "https://raw.githubusercontent.com/levelip/sh/master/shell.sh" -o shell.sh  && chmod 755 shell.sh && ./shell.sh && rm -rf shell.sh
 ==
+     curl "https://raw.githubusercontent.com/levelip/17/master/sh/allbackup.sh" -o allbackup.sh && chmod 755 allbackup.sh && ./allbackup.sh && rm -rf allbackup.sh
     curl "https://raw.githubusercontent.com/levelip/sh/master/photos.sh" -o photos.sh  && chmod 755 photos.sh && ./photos.sh && rm -rf photos.sh
 ==
     curl "https://raw.githubusercontent.com/levelip/sh/master/installnginx.sh" -o installnginx.sh  && chmod 755 installnginx.sh && ./installnginx.sh && rm -rf installnginx.sh
