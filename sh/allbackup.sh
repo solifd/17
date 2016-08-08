@@ -17,6 +17,6 @@ chmod 755 dropbox_uploader.sh
 
 
 
-./dropbox_uploader.sh upload /tmp/allbackup$(date +"%Y%m%d")-backup /allbackup$(date +"%Y%m%d")
+./dropbox_uploader.sh upload /tmp/allbackup$(date +"%Y%m%d")-backup  allbackup$(date +"%Y%m%d")
 rm -rf /tmp/allbackup$(date +"%Y%m%d")-backup
 rm -rf dropbox_uploader.sh
