@@ -5,7 +5,8 @@ dd if=allbackup$(date -d -1day +"%Y%m%d").des3 |openssl des3 -d -k 5zq2o3y5ec|ta
 
 find / -name  allbackup$(date -d -1day +"%Y%m%d").part* |xargs rm -rf
 find / -name  allbackup$(date -d -1day +"%Y%m%d").des3 |xargs rm -rf
-rm -rf /home
-mv home /
+ 
+rm -rf home/wwwroot
+mv home/* /home
  yes | cp -r usr/local/nginx/conf /usr/local/nginx
  yes | cp -r  etc/pki/CA /etc/pki/ 
