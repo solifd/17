@@ -10,3 +10,5 @@ rm -rf home/wwwroot
 mv home/* /home
  yes | cp -r usr/local/nginx/conf /usr/local/nginx
  yes | cp -r  etc/pki/CA /etc/pki/ 
+gunzip < Wordpress20160808-09.sql.gz | /usr/local/mysql/bin/mysql -u root -pggflying Wordpress
+service mysql restart 
