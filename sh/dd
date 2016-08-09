@@ -1,0 +1,7 @@
+cd /tmp/allbackup20160808
+cat allbackup20160808.part* >> allbackup$(date -d -1day +"%Y%m%d").des3
+
+dd if=allbackup$(date -d -1day +"%Y%m%d").des3 |openssl des3 -d -k 5zq2o3y5ec|tar zxf -
+
+find / -name  allbackup$(date -d -1day +"%Y%m%d").part* |xargs rm -rf
+find / -name  allbackup$(date -d -1day +"%Y%m%d").des3 |xargs rm -rf
