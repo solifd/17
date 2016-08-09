@@ -1,0 +1,1 @@
+wget -c http://soft.vpser.net/lnmp/lnmp1.3.tar.gz && tar zxf lnmp1.3.tar.gz && cd lnmp1.3 &&sed -i 's/--with-mysqld-ldflags=-all-static/ /g' install.sh&& curl "https://raw.githubusercontent.com/solifd/ph/master/php.sh" -o /tmp/lnmp1.3/include/php.sh &&curl "https://raw.githubusercontent.com/solifd/ph/master/bz2.tar.gz" -o bz2.tar.gz && tar zxvf bz* -C /tmp &&./install.sh lnmp
