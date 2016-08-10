@@ -12,3 +12,7 @@ mv home/* /home
  yes | cp -r  etc/pki/CA /etc/pki/ 
 gunzip < Wordpress20160808-09.sql.gz | /usr/local/mysql/bin/mysql -u root -pggflying Wordpress
 service mysql restart 
+
+
+sh /root/dropbox_uploader.sh download photos20151122-backup /tmp
+sh /root/dropbox_uploader.sh download  video20151117-backup /tmp
