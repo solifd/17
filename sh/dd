@@ -16,3 +16,9 @@ service mysql restart
 
 sh /root/dropbox_uploader.sh download photos20151122-backup /tmp
 sh /root/dropbox_uploader.sh download  video20151117-backup /tmp
+tar zxvf  /tmp/photos20151122-backup/photos.tar.gz
+mv home/wordpress/photos  /home/wordpress/
+tar zxvf   /tmp/video20151117-backup/video.tar.gz
+mv home/wordpress/video  /home/wordpress/
+find / -name  photos.tar.gz|xargs rm -rf
+find / -name  video.tar.gz|xargs rm -rf
