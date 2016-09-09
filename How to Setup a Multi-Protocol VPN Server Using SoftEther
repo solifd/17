@@ -13,8 +13,8 @@ chmod 600 *
 chmod 700 vpnserver
 chmod 700 vpncmd
 
-vi /etc/init.d/vpnserver
-cat >>/etc/ipsec.conf<<EOF
+
+cat >>/etc/init.d/vpnserver<<EOF
 #!/bin/sh
 # chkconfig: 2345 99 01
 # description: SoftEther VPN Server
