@@ -5,7 +5,14 @@ lynx http://www.softether-download.com/files/softether/
  ./.install.sh
  yum groupinstall "Development Tools" -y
   ./.install.sh
- 
+ cd ..
+mv vpnserver /usr/local
+cd /usr/local/vpnserver/
+
+chmod 600 *
+chmod 700 vpnserver
+chmod 700 vpncmd
+chmod 755 /etc/init.d/vpnserver && /etc/init.d/vpnserver start
  
  yum install -y  squid
   cd /etc/squid/
@@ -23,9 +30,9 @@ lynx http://www.softether-download.com/files/softether/
  ./mproxy-kangml -l 8080 -d
  
  
-/etc/init.d/vpnserver
+
  
- chmod 755 /etc/init.d/vpnserver && /etc/init.d/vpnserver start
+ 
  
  service squid start
  /etc/init.d/vpnserver stop
