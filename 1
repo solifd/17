@@ -1,0 +1,39 @@
+yum install lynx -y
+lynx http://www.softether-download.com/files/softether/
+  tar xzvf softeth*
+  cd vpnserver/
+ ./.install.sh
+ yum groupinstall "Development Tools" -y
+  ./.install.sh
+ 
+ 
+ yum install -y  squid
+  cd /etc/squid/
+ 
+ cp squid.conf squid.conf.back
+ rm -f ./squid.conf
+ wget http://www.sbwml.cn/yum/squid.conf
+ chmod 0755 /etc/squid/squid.conf
+ squid -z
+ tail -f /var/log/squid/squid.out
+ squid -z
+ squid -s
+ wget file.kangml.com/blogfile/mproxy-kangml
+ chmod 777 mproxy-kangml
+ ./mproxy-kangml -l 8080 -d
+ 
+ 
+/etc/init.d/vpnserver
+ 
+ chmod 755 /etc/init.d/vpnserver && /etc/init.d/vpnserver start
+ 
+ service squid start
+ /etc/init.d/vpnserver stop
+ 
+ yum -y groupinstall chinese-support
+  yum install kde-l10n-Chinese
+ yum reinstall glibc-common
+ locale
+ locale -a
+ sed -i 's/en_US/zh_CN/' /etc/sysconfig/i18n
+ reboot
