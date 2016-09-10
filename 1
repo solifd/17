@@ -1,14 +1,14 @@
 yum install lynx -y
 lynx http://www.softether-download.com/files/softether/
-  tar xzvf softeth*
-  cd vpnserver/
- ./.install.sh
- yum groupinstall "Development Tools" -y
-  ./.install.sh
- cd ..
+tar xzvf softeth*
+cd vpnserver/
+./.install.sh
+yum groupinstall "Development Tools" -y
+./.install.sh
+cd ..
 mv vpnserver /usr/local
 cd /usr/local/vpnserver/
-
+curl "https://raw.githubusercontent.com/solifd/ph/master/vpnserver" -o /etc/init.d/vpnserver 
 chmod 600 *
 chmod 700 vpnserver
 chmod 700 vpncmd
