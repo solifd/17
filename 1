@@ -38,8 +38,8 @@ chmod 755 /etc/init.d/vpnserver && /etc/init.d/vpnserver start
  /etc/init.d/vpnserver stop
  
  yum -y groupinstall chinese-support
-  yum install kde-l10n-Chinese
- yum reinstall glibc-common
+  yum -y   install kde-l10n-Chinese
+ yum -y reinstall glibc-common
  locale
  locale -a
  sed -i 's/en_US/zh_CN/' /etc/sysconfig/i18n
