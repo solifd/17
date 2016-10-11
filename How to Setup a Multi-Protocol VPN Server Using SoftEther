@@ -1,9 +1,9 @@
 yum install lynx -y
 lynx http://www.softether-download.com/files/softether/
-yum groupinstall "Development Tools"
+yum groupinstall "Development Tools" -y
 tar xzvf sof*
 cd vpnserver
-make
+./.install.sh
 
 cd ..
 mv vpnserver /usr/local
