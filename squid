@@ -16,7 +16,7 @@ via off
 request_header_access X-Forwarded-For deny all
 request_header_access user-agent  deny all
 reply_header_access X-Forwarded-For deny all
-reply_header_access user-agentdeny all
+reply_header_access user-agent   deny all
 http_port 80
 http_access allow squid_user
 http_access deny all
