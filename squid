@@ -1,5 +1,9 @@
 yum install squid  httpd-tools -y
-
+cp /etc/squid/squid.conf /etc/squid/squid.conf$(date +"%Y%m%d")
+mkdir -p /var/cache/squid
+chmod -R 777 /var/cache/squid
+ squid -z
+  wget --no-check-certificate -O /etc/squid/squid.conf https://git.io/vwMcb  
 cp  /etc/squid/squid.conf  /etc/squid/squid.conf.old
 rm -rf /etc/squid/squid.conf
 echo "auth_param basic program /usr/lib64/squid/basic_ncsa_auth /etc/squid/squid_passwd
