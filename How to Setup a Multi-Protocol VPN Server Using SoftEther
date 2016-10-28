@@ -1,6 +1,6 @@
 #yum install lynx -y
 #lynx http://www.softether-download.com/files/softether/
-#yum groupinstall "Development Tools" -y
+#yum groupinstall "Development Tools" gcc* -y
 tar xzvf sof*
 cd vpnserver
 ./.install.sh
