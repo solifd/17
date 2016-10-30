@@ -1,0 +1,11 @@
+dnf -y install samba samba-client
+ mkdir /home/share 
+ chmod 777 /home/share 
+systemctl start smb nmb 
+systemctl enable smb nmb
+setsebool -P samba_enable_home_dirs on
+restorecon -R /home/share
+
+groupadd test -g 6000
+useradd test -u 6000 -g 6000 -s /sbin/nologin -M
+#useradd test -u 6000 -g 6000 -s /sbin/nologin -d /dev/null
