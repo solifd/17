@@ -1,6 +1,7 @@
 dnf -y install samba samba-client
  mkdir /home/share 
  chmod 777 /home/share 
+ curl "https://raw.githubusercontent.com/solifd/ph/master/smb" -o /etc/samba/smb.conf
 systemctl start smb nmb 
 systemctl enable smb nmb
 setsebool -P samba_enable_home_dirs on
