@@ -10,3 +10,4 @@ restorecon -R /home/share
 groupadd test -g 6000
 useradd test -u 6000 -g 6000 -s /sbin/nologin -M
 #useradd test -u 6000 -g 6000 -s /sbin/nologin -d /dev/null
+smbpasswd -a test
