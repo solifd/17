@@ -11,6 +11,6 @@ if [ "$resolve_ip" = "$current_ip" ]; then
 else
     # The IP changed. Update Linode's DNS to show the new IP
    echo "$current_ip" >> /tmp/CURRENT_WAN_IP.txt
-   echo "    curl -X POST https://dnsapi.cn/Record.Modify -d 'login_token=21103,2fecc62a15f4e384cda36d1ee0258c12&format=json&domain_id=37843102&record_id=250439415&sub_domain=j&value=$current_ip&record_type=A&record_line_id=0'">>5
+   
     #wget -qO- https://api.linode.com/?api_key="$LINODE_API_KEY"\&api_action=domain.resource.update\&DomainID="$DOMAIN_ID"\&ResourceID="$RESOURCE_ID"\&Target="$WAN_IP"
 fi
