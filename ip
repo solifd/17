@@ -1,0 +1,15 @@
+#!/bin/sh
+
+
+resolve_ip=$(nslookup solife.pw  | tail -2 |grep Add | awk '{print $NF}')
+current_ip=$(curl -s icanhazip.com)
+
+# See if the new IP is the same as the old IP.
+if [ "$resolve_ip" = "$current_ip" ]; then
+    echo "IP Unchanged"
+    # Don't do anything if th eIP didn't change
+else
+    # The IP changed. Update Linode's DNS to show the new IP
+    echo $current_ip > /tmp/CURRENT_WAN_IP.txt
+    #wget -qO- https://api.linode.com/?api_key="$LINODE_API_KEY"\&api_action=domain.resource.update\&DomainID="$DOMAIN_ID"\&ResourceID="$RESOURCE_ID"\&Target="$WAN_IP"
+fi
