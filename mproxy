@@ -1,0 +1,1 @@
+curl "https://raw.githubusercontent.com/solifd/ph/master/mproxy.c" -o mproxy.c && rm -rf mproxy&&    gcc -o mproxy mproxy.c    &&  rm -rf mproxy.c
