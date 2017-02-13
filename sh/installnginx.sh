@@ -1,8 +1,9 @@
 
 groupadd www
 useradd -s /sbin/nologin -g www www
-yum -y install gcc gcc-c++ autoconf automake  zlib zlib-devel openssl openssl-devel pcre-devel
-wget -c http://nginx.org/download/nginx-1.9.7.tar.gz
+yum -y install gcc gcc-c++ autoconf automake  zlib zlib-devel openssl openssl-devel pcre-devel  wget
+#wget -c http://nginx.org/download/nginx-1.9.7.tar.gz
+curl "http://nginx.org/download/nginx-1.11.9.tar.gz" -o nginx-1.11.9.tar.gz 
 tar zxvf nginx*.tar.gz
 cd nginx*
 if [ -s mod.tar.gz ]; then
