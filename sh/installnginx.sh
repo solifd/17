@@ -2,8 +2,8 @@
 groupadd www
 useradd -s /sbin/nologin -g www www
 yum -y install gcc gcc-c++ autoconf automake  zlib zlib-devel openssl openssl-devel pcre-devel
-wget -c http://nginx.org/download/nginx-1.9.7.tar.gz
-tar zxvf nginx*.tar.gz
+wget -c http://nginx.org/download/nginx-1.11.9.tar.gz
+tar zxvf nginx*.tar.gz 
 cd nginx*
 if [ -s mod.tar.gz ]; then
 echo "mod.tar.gz [found]"
